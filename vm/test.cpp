@@ -13,19 +13,6 @@ public:
     int var1 = 0, var2 = 1, var3 = 2, var4 = 3;
 };
 
-class awaitable {
-public:
-    constexpr bool await_ready() const noexcept {
-        return false;
-    }
-    constexpr void await_suspend(std::coroutine_handle<promise> h) const noexcept {
-
-    }
-    constexpr void await_resume() const noexcept {
-
-    }
-};
-
 coroutine when_green_flag(target *target) {
     {
         auto waiting_threads = target->broadcast_and_wait(L"dd");
@@ -70,11 +57,9 @@ int main() {
     runtime.push_broadcast(L"dd", std::bind(when_broadcast, &sprite1));
     runtime.push_broadcast(L"dd", std::bind(when_broadcast2, &sprite1));
 
-    //thread *t1 = new thread(std::bind(when_green_flag, &sprite1));
+    thread *t1 = new thread(std::bind(when_green_flag, &sprite1));
     //thread *t2 = new thread(std::bind(when_broadcast, &sprite1));
-    //runtime.push_thread(t1);
-    thread *t3 = new thread(aa);
-    runtime.push_thread(t3);
+    runtime.push_thread(t1);
     //runtime.push_thread(t2);
     while (!runtime.should_terminate()) {
         runtime.excute();
