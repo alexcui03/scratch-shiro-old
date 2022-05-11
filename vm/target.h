@@ -11,8 +11,9 @@ namespace ccvm {
     public:
         target(runtime *rt);
         ~target();
-        void broadcast(std::wstring name);
-        std::vector<thread *> broadcast_and_wait(std::wstring name);
+        void broadcast(const std::wstring &name);
+        std::vector<int> broadcast_and_wait(const std::wstring &name);
+        bool check_waiting_threads(const std::vector<int> &waiting);
     protected:
         runtime *rt;
     };

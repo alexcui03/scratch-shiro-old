@@ -2,6 +2,8 @@
 #define _THREAD_H_
 
 #include <functional>
+#include <vector>
+#include <stack>
 
 #include "coroutine.h"
 
@@ -12,6 +14,8 @@ namespace ccvm {
 
     class thread {
     public:
+        int id;
+
         thread(std::function<coroutine()> func);
         ~thread();
         thread_status excute();

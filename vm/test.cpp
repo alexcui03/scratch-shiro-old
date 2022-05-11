@@ -18,14 +18,7 @@ coroutine when_green_flag(target *target) {
         auto waiting_threads = target->broadcast_and_wait(L"dd");
         while (true) {
             co_await std::suspend_always();
-            int count = 0;
-            for (auto thread : waiting_threads) {
-                if (thread->get_status() == thread_status::done)
-                    ++count;
-                else
-                    break;
-            }
-            if (count == waiting_threads.size()) break;
+            if (target->check_waiting_threads(waiting_threads)) break;
         }
     }
     for (int i = 0; i < 10; ++i) {
@@ -61,9 +54,11 @@ int main() {
     //thread *t2 = new thread(std::bind(when_broadcast, &sprite1));
     runtime.push_thread(t1);
     //runtime.push_thread(t2);
+    std::cout << "start" << std::endl;
     while (!runtime.should_terminate()) {
+        std::cout << "step" << std::endl;
         runtime.excute();
-        std::cout << "test" << std::endl;
     }
+    std::cout << "end" << std::endl;
     return 0;
 }

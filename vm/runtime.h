@@ -16,16 +16,22 @@ namespace ccvm {
         runtime();
         ~runtime();
         void add_target(target *target);
-        void push_thread(thread *thread);
+        int push_thread(thread *thread);
+        thread *get_thread(int i);
+        void free_thread(int i);
         void push_broadcast(std::wstring name, std::function<coroutine()> func);
         void broadcast(std::wstring name);
-        std::vector<thread *> broadcast_and_wait(std::wstring name);
+        std::vector<int> broadcast_and_wait(std::wstring name);
         void excute();
+        void terminate();
         bool should_terminate();
     private:
-        int clone_count;
+        bool terminate_status;
+
+        std::vector<thread *> thread_pool;
+        std::stack<int> thread_free;
+
         std::vector<target *> targets;
-        std::vector<thread *> threads;
         std::map<std::wstring, std::vector<std::function<coroutine()>>> broadcast_map;
     };
 }

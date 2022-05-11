@@ -11,12 +11,19 @@ ccvm::target::~target() {
 
 }
 
-void ccvm::target::broadcast(std::wstring name) {
+void ccvm::target::broadcast(const std::wstring &name) {
     this->rt->broadcast(name);
 }
 
-std::vector<ccvm::thread *> ccvm::target::broadcast_and_wait(std::wstring name) {
+std::vector<int> ccvm::target::broadcast_and_wait(const std::wstring &name) {
     return this->rt->broadcast_and_wait(name);
+}
+
+bool ccvm::target::check_waiting_threads(const std::vector<int> &waiting) {
+    for (auto i : waiting) {
+        if (this->rt->get_thread(i) != nullptr) return false;
+    }
+    return true;
 }
 
 ccvm::stage::stage(ccvm::runtime *rt): target(rt) {
