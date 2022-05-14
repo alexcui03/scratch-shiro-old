@@ -43,7 +43,7 @@ coroutine when_broadcast2(target *target) {
     }
     co_return;
 }
-
+/*
 int main() {
     runtime runtime;
     sprite1 sprite1(&runtime);
@@ -62,3 +62,4 @@ int main() {
     std::cout << "end" << std::endl;
     return 0;
 }
+*/
