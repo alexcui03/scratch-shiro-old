@@ -33,6 +33,23 @@ void compiler::init_block_map() {
         compiler->code << ");" ENDL "this->x = target.x; this->y = target.y;}";
     };
 
+    // looks
+    this->block_map["looks_say"] = [](PARAMS) -> void {
+        compiler->code << "this->say(";
+        PARSE_INPUT("MESSAGE");
+        compiler->code << ");" ENDL;
+    };
+
+    // sensing
+    this->block_map["sensing_askandwait"] = [](PARAMS) -> void {
+        compiler->code << "co_yield this->askandwait(";
+        PARSE_INPUT("QUESTION");
+        compiler->code << ");" ENDL;
+    };
+    this->input_map["sensing_answer"] = [](PARAMS) -> void {
+        compiler->code << "this->runtime->answer";
+    };
+
     // operator
     this->input_map["operator_add"] = [](PARAMS) -> void {
         compiler->code << "(";

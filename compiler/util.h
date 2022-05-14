@@ -14,6 +14,7 @@ inline std::string &operator<<(std::string &str, const Ty &v) {
 }
 
 std::string stringify(const std::string &str);
+bool is_valid_number(const std::string &str);
 
 }
 

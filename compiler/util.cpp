@@ -1,6 +1,7 @@
 #include "util.h"
 
 #include <string>
+#include <cctype>
 
 namespace clipcc {
 
@@ -23,6 +24,21 @@ std::string stringify(const std::string &str) {
         }
     }
     return res;
+}
+
+bool is_valid_number(const std::string &str) {
+    if (str.size() == 0) return false;
+    int i = 0;
+    bool point = false;
+    if (str[0] == '+' || str[0] == '-') ++i;
+    for (; i < str.size(); ++i) {
+        if (str[i] == '.') {
+            if (point) return false;
+            point = true;
+        }
+        if (!std::isdigit(str[i])) return false;
+    }
+    return true;
 }
 
 }
