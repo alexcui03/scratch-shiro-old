@@ -12,5 +12,6 @@
 #include "target.h"
 #include "thread.h"
 #include "variant.h"
+#include "lib.h"
 
 #endif // !_CLIPCC_VM_H_

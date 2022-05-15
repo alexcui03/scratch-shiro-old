@@ -8,7 +8,7 @@
 
 namespace clipcc {
     enum value_type {
-        integer, real_number, string, var
+        integer, real_number, string, var, any
     };
 
     class scratch_input {
