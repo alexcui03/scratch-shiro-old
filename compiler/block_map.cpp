@@ -16,7 +16,7 @@ void compiler::init_block_map() {
 
     // motion
     this->block_map["motion_movesteps"] = [](PARAMS) -> void {
-        compiler->code << "this->move_steps(";
+        compiler->code << "move_steps(";
         PARSE_INPUT("STEPS");
         compiler->code << ");" ENDL;
     };
@@ -28,33 +28,33 @@ void compiler::init_block_map() {
         compiler->code << ");" ENDL;
     };
     this->block_map["motion_goto"] = [](PARAMS) -> void {
-        compiler->code << "{auto target = this->getTarget(";
+        compiler->code << "{auto target = getTarget(";
         PARSE_INPUT("TO");
         compiler->code << ");" ENDL "this->x = target.x; this->y = target.y;}";
     };
 
     // looks
     this->block_map["looks_say"] = [](PARAMS) -> void {
-        compiler->code << "this->say(";
+        compiler->code << "say(";
         PARSE_INPUT("MESSAGE");
         compiler->code << ");" ENDL;
     };
 
     // sensing
     this->block_map["sensing_askandwait"] = [](PARAMS) -> void {
-        compiler->code << "co_yield this->askandwait(";
+        compiler->code << "co_yield runtime->ask_and_wait(";
         PARSE_INPUT("QUESTION");
         compiler->code << ");" ENDL;
     };
     this->input_map["sensing_answer"] = [](PARAMS) -> void {
-        compiler->code << "this->runtime->answer";
+        compiler->code << "runtime->answer";
     };
 
     // operator
     this->input_map["operator_add"] = [](PARAMS) -> void {
-        compiler->code << "(";
+        compiler->code << "static_cast<double>(";
         PARSE_INPUT("NUM1");
-        compiler->code << ") + (";
+        compiler->code << ") + static_cast<double>(";
         PARSE_INPUT("NUM2");
         compiler->code << ")";
     };
@@ -68,7 +68,9 @@ void compiler::init_block_map() {
 
     // data
     this->block_map["data_setvariableto"] = [](PARAMS) -> void {
-        compiler->code << "this->var_" << std::to_string(compiler->var_map[target][block->inputs["VARIABLE"]->value]) << " = ";
+        block->inputs["VARIABLE"]->type = value_type::var;
+        compiler->compile_input(target, block, block->inputs["VARIABLE"]);
+        compiler->code << " = ";
         compiler->compile_input(target, block, block->inputs["VALUE"]);
         compiler->code << ";" ENDL;
     };

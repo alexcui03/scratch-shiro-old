@@ -42,70 +42,13 @@ std::string compiler::compile_project(const std::string &src) {
 
 void compiler::compile() {
     std::string main_code = "ccvm::runtime runtime;" ENDL;
-    for (int i = 0; auto target : this->project->targets) {
-        this->target_name.push_back(target->name);
-        std::string class_name = "target_" + std::to_string(i);
-        std::string parent_class = target->is_stage ? "stage" : "sprite";
-        this->code << "class " << class_name << ": public ccvm::"
-            << parent_class << " {" ENDL << "public:" ENDL;
-        // generate variables
-        for (int j = 0; auto var : target->variables) {
-            this->code << "ccvm::variant var_" << std::to_string(j) << ";" ENDL;
-            this->var_map[target][var->name] = j;
-            ++j;
-        }
-        
-        // constructor
-        this->code << class_name << "(ccvm::runtime *rt): ccvm::" << parent_class << "(rt) {" ENDL;
-        this->code << "}" ENDL;
-        
-        // destructor
-        this->code << "~" << class_name << "() {" ENDL;
-        this->code << "}" ENDL;
 
-        // init target
-        main_code << class_name << " " << class_name << "(&runtime);" ENDL;
-
-        // generate script
-        for (int j = 0; auto block : target->blocks) {
-            if (!block->top_level) continue;
-
-            std::string func_name = "func_" + std::to_string(j);
-            this->code << "ccvm::coroutine " << func_name << "() {" ENDL;
-            // maybe we should move below codes to an event_map for generating codes.
-            // @todo
-            if (block->opcode == "event_whenflagclicked") {
-                main_code << "runtime.push_thread(new ccvm::thread(std::bind(&"
-                    << class_name << "::" << func_name << ", &" << class_name << ")));" ENDL;
-            }
-            else if (block->opcode == "event_whenbroadcastreceived") {
-                main_code << "runtime.push_broadcast(\"" << block->inputs["BROADCAST_OPTION"]->value
-                    << "\", std::bind(&" << class_name << "::" << func_name << ", &" << class_name << "));" ENDL;
-            }
-            else {
-                std::cerr << "[warn] unsupported opcode of top level block: " << block->opcode << std::endl;
-            }
-
-            auto cur_block = block;
-            while (!cur_block->next.empty()) {
-                if (!target->blocks_map.contains(cur_block->next)) {
-                    std::cerr << "[error] cannot found block id " << cur_block->next << std::endl;
-                    break;
-                }
-                cur_block = target->blocks_map[cur_block->next];
-                if (this->block_map.contains(cur_block->opcode)) {
-                    this->block_map[cur_block->opcode](this, target, cur_block);
-                }
-                else {
-                    std::cerr << "[warn] unsupported opcode: " << cur_block->opcode << std::endl;
-                }
-            }
-
-            this->code << "}" ENDL;
-            ++j;
-        }
-
-        this->code << "};" ENDL;
+    // we should gen stage first
+    this->compile_target(this->project->stage, main_code, 0);
+    
+    for (int i = 1; auto target : this->project->targets) {
+        if (target->is_stage) continue;
+        this->compile_target(target, main_code, i);
         ++i;
     }
 
@@ -114,11 +57,97 @@ void compiler::compile() {
         << "while (!runtime.should_terminate()) runtime.excute();" ENDL "return 0;" ENDL "}" ENDL;
 }
 
+void compiler::compile_target(scratch_target *target, std::string &main_code, int i) {
+    this->target_name.push_back(target->name);
+    std::string class_name = "target_" + std::to_string(i);
+    std::string parent_class = target->is_stage ? "stage" : "sprite";
+    this->code << "class " << class_name << ": public ccvm::"
+        << parent_class << " {" ENDL << "public:" ENDL;
+
+    if (!target->is_stage) {
+        this->code << "target_0 *stage;" ENDL;
+    }
+
+    // generate variables
+    for (int j = 0; auto var : target->variables) {
+        this->code << "ccvm::variant var_" << std::to_string(j) << ";" ENDL;
+        this->var_map[target][var->name] = j;
+        ++j;
+    }
+    
+    // constructor
+    if (target->is_stage) {
+        this->code << class_name << "(ccvm::runtime *rt): ccvm::" << parent_class << "(rt) {" ENDL;
+    }
+    else {
+        this->code << class_name << "(ccvm::runtime *rt, target_0 *t): ccvm::" << parent_class << "(rt), stage(t) {" ENDL;
+    }
+    this->code << "}" ENDL;
+    
+    // destructor
+    this->code << "~" << class_name << "() {" ENDL;
+    this->code << "}" ENDL;
+
+    // init target
+    if (target->is_stage) {
+        main_code << class_name << " " << class_name << "(&runtime);" ENDL;
+    }
+    else {
+        main_code << class_name << " " << class_name << "(&runtime, &target_0);" ENDL;
+    }
+
+    // generate script
+    for (int j = 0; auto block : target->blocks) {
+        if (!block->top_level) continue;
+
+        std::string func_name = "func_" + std::to_string(j);
+        this->code << "ccvm::coroutine " << func_name << "() {" ENDL;
+        // maybe we should move below codes to an event_map for generating codes.
+        // @todo
+        if (block->opcode == "event_whenflagclicked") {
+            main_code << "runtime.push_thread(new ccvm::thread(std::bind(&"
+                << class_name << "::" << func_name << ", &" << class_name << ")));" ENDL;
+        }
+        else if (block->opcode == "event_whenbroadcastreceived") {
+            main_code << "runtime.push_broadcast(\"" << block->inputs["BROADCAST_OPTION"]->value
+                << "\", std::bind(&" << class_name << "::" << func_name << ", &" << class_name << "));" ENDL;
+        }
+        else {
+            std::cerr << "[warn] unsupported opcode of top level block: " << block->opcode << std::endl;
+        }
+
+        auto cur_block = block;
+        while (!cur_block->next.empty()) {
+            if (!target->blocks_map.contains(cur_block->next)) {
+                std::cerr << "[error] cannot found block id " << cur_block->next << std::endl;
+                break;
+            }
+            cur_block = target->blocks_map[cur_block->next];
+            if (this->block_map.contains(cur_block->opcode)) {
+                this->block_map[cur_block->opcode](this, target, cur_block);
+            }
+            else {
+                std::cerr << "[warn] unsupported opcode: " << cur_block->opcode << std::endl;
+            }
+        }
+
+        this->code << "co_return;" ENDL "}" ENDL;
+        ++j;
+    }
+
+    this->code << "};" ENDL;
+}
+
 void compiler::compile_input(scratch_target *target, scratch_block *parent, scratch_input *input) {
     if (input->block_id.empty()) {
         if (input->type == value_type::var) {
-            // if the input is an var
-            this->code << "this->var_" << std::to_string(this->var_map[target][input->value]);
+            // when it is an var name, then judge whether it is local or global.
+            if (!target->is_stage && this->var_map[this->project->stage].contains(input->value)) {
+                this->code << "stage->var_" << std::to_string(this->var_map[this->project->stage][input->value]);
+            }
+            else {
+                this->code << "this->var_" << std::to_string(this->var_map[target][input->value]);
+            }
         }
         else if (input->type == value_type::string) {
             this->code << "\"" << stringify(input->value) << "\"";
@@ -149,8 +178,16 @@ void compiler::compile_input(scratch_target *target, scratch_block *parent, scra
 
 scratch_project *parse_project(const Json::Value &root) {
     auto project = new scratch_project;
+    project->stage = nullptr;
     for (auto target : root["targets"]) {
-        project->targets.push_back(parse_target(target));
+        auto temp = parse_target(target);
+        project->targets.push_back(temp);
+        if (temp->is_stage) {
+            if (project->stage != nullptr) {
+                std::cerr << "[error] more than one stage in the project." << std::endl;
+            }
+            project->stage = temp;
+        }
     }
 
     // parse monitors

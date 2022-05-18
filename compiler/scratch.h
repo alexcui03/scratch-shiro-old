@@ -96,6 +96,7 @@ namespace clipcc {
     class scratch_project {
     public:
         std::vector<scratch_target *> targets;
+        scratch_target *stage;
     };
 }
 

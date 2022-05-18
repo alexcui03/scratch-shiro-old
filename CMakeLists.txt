@@ -4,6 +4,10 @@ project(clipcc-runtime LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_CXX_STANDARD 20)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-fcoroutines -fpermissive)
+endif()
+
 # third_party/jsoncpp
 set(JSONCPP_DIR ${CMAKE_SOURCE_DIR}/third_party/jsoncpp)
 set(JSONCPP_WITH_TESTS OFF)
@@ -28,3 +32,25 @@ target_include_directories(clipcc-compiler PRIVATE ${COMPILER_INC})
 target_link_libraries(clipcc-compiler PRIVATE ${COMPILER_LIB})
 
 # clipcc-vm
+set(VM_SRC)
+set(VM_INC)
+set(VM_LIB)
+
+file(GLOB VM_INC ${CMAKE_SOURCE_DIR}/vm/*.h)
+file(GLOB VM_SRC ${CMAKE_SOURCE_DIR}/vm/*.cpp)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    list(APPEND VM_LIB pthread)
+endif()
+
+#add_library(clipcc-vm SHARED ${VM_SRC})
+#add_library(clipcc-vm-static STATIC ${VM_SRC})
+add_executable(clipcc-vm-test ${VM_SRC})
+target_include_directories(clipcc-vm-test PRIVATE ${VM_INC})
+target_link_libraries(clipcc-vm-test PRIVATE ${VM_LIB})
+
+# configs
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
