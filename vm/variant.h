@@ -31,8 +31,16 @@ public:
     operator double() const;
     operator std::string() const;
     operator bool() const;
+    double operator+(double x);
+    friend double operator+(double x, const variant &y);
+    double operator-(double x);
+    friend double operator-(double x, const variant &y);
+    double operator*(double x);
+    friend double operator*(double x, const variant &y);
+    double operator/(double x);
+    friend double operator/(double x, const variant &y);
     unsigned char type() const;
-    bool isInt() const;
+    bool is_int() const;
 private:
     mutable unsigned char value_type;
     unsigned char basic_type;

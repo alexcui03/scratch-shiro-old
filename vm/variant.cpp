@@ -37,32 +37,42 @@ variant::variant(bool v) {
 variant::~variant() {}
 
 variant &variant::operator=(const variant &v) {
-    this->value_type = this->basic_type = v.value_type;
+    this->value_type = v.value_type;
+    this->basic_type = v.basic_type;
+    this->value_double = v.value_double;
+    this->value_int = v.value_int;
+    this->value_str = v.value_str;
+    return *this;
 }
 
 variant &variant::operator=(int v) {
     this->value_type = this->basic_type = type::integer;
     this->value_int = v;
+    return *this;
 }
 
 variant &variant::operator=(double v) {
     this->value_type = this->basic_type = type::number;
     this->value_double = v;
+    return *this;
 }
 
 variant &variant::operator=(const char *v) {
     this->value_type = this->basic_type = type::string;
     this->value_str = v;
+    return *this;
 }
 
 variant &variant::operator=(const std::string &v) {
     this->value_type = this->basic_type = type::string;
     this->value_str = v;
+    return *this;
 }
 
 variant &variant::operator=(bool b) {
     this->value_type = this->basic_type = type::boolean;
     this->value_bool = b;
+    return *this;
 }
 
 variant::operator int() const {
@@ -113,11 +123,43 @@ variant::operator bool() const {
     return this->value_bool;
 }
 
+double variant::operator+(double x) {
+    return static_cast<double>(*this) + x;
+}
+
+double operator+(double x, const variant &y) {
+    return x + static_cast<double>(y);
+}
+
+double variant::operator-(double x) {
+    return static_cast<double>(*this) - x;
+}
+
+double operator-(double x, const variant &y) {
+    return x - static_cast<double>(y);
+}
+
+double variant::operator*(double x) {
+    return static_cast<double>(*this) * x;
+}
+
+double operator*(double x, const variant &y) {
+    return x * static_cast<double>(y);
+}
+
+double variant::operator/(double x) {
+    return static_cast<double>(*this) / x;
+}
+
+double operator/(double x, const variant &y) {
+    return x / static_cast<double>(y);
+}
+
 unsigned char variant::type() const {
     return this->basic_type;
 }
 
-bool variant::isInt() const {
+bool variant::is_int() const {
     if (this->basic_type == type::integer) return true;
     if (this->basic_type == type::number) {
         // in scratch, NaN is always considered as an integer.

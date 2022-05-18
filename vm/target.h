@@ -3,10 +3,14 @@
 
 #include <string>
 #include <functional>
+#include <type_traits>
 
 #include "runtime.h"
 
 namespace ccvm {
+    template <class Ty>
+    concept arithmetic = std::is_arithmetic_v<Ty>;
+
     class target {
     public:
         target(runtime *rt);
@@ -15,19 +19,25 @@ namespace ccvm {
         std::vector<int> broadcast_and_wait(const std::wstring &name);
         bool check_waiting_threads(const std::vector<int> &waiting);
     public:
-        runtime *rt;
+        runtime *runtime;
     };
 
     class stage: public target {
     public:
-        stage(runtime *rt);
+        stage(ccvm::runtime *rt);
         ~stage();
     };
 
     class sprite: public target {
     public:
-        sprite(runtime *rt);
+        sprite(ccvm::runtime *rt);
         ~sprite();
+
+        // blocks
+        void say(const std::string &str);
+        template <arithmetic Ty> void say(const Ty &val) {
+            this->say(std::to_string(val));
+        }
     public:
         double x;
         double y;

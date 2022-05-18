@@ -1,5 +1,12 @@
 #include "runtime.h"
 
+#include <future>
+#include <string>
+#include <chrono>
+#include <iostream>
+
+using namespace std::chrono_literals;
+
 ccvm::runtime::runtime() {
     this->terminate_status = false;
 }
@@ -58,6 +65,22 @@ std::vector<int> ccvm::runtime::broadcast_and_wait(std::wstring name) {
         }
     }
     return list;
+}
+
+ccvm::coroutine ccvm::runtime::ask_and_wait(const std::string &str) {
+    auto io = std::async([&]() {
+        std::string s;
+        std::getline(std::cin, s);
+        return s;
+    });
+    std::cout << str << std::endl;
+    while (true) {
+        if (io.wait_for(0s) == std::future_status::ready) {
+            this->answer = io.get();
+            co_return;
+        }
+        co_await std::suspend_always{};
+    }
 }
 
 void ccvm::runtime::excute() {

@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "thread.h"
+#include "variant.h"
 
 namespace ccvm {
     class target;
@@ -22,9 +23,13 @@ namespace ccvm {
         void push_broadcast(std::wstring name, std::function<coroutine()> func);
         void broadcast(std::wstring name);
         std::vector<int> broadcast_and_wait(std::wstring name);
+        coroutine ask_and_wait(const std::string &str);
         void excute();
         void terminate();
         bool should_terminate();
+
+        target *stage;
+        variant answer;
     private:
         bool terminate_status;
 
