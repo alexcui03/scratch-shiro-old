@@ -19,7 +19,9 @@ namespace clipcc {
 
         scratch_project *project;
         std::string code;
+        std::string main_code;
         std::unordered_map<scratch_target *, std::unordered_map<std::string, int>> var_map;
+        std::vector<scratch_procedure> procedure_prototypes;
         std::vector<std::string> target_name;
 
         std::unordered_map<std::string, std::function<void(
@@ -29,7 +31,7 @@ namespace clipcc {
 
         void init_block_map(); // in block_map.cpp
         void compile();
-        void compile_target(scratch_target *target, std::string &main_code, int i);
+        void compile_target(scratch_target *target, int i);
         void compile_input(scratch_target *target, scratch_block *parent, scratch_input *input);
     };
 }

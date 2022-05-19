@@ -74,6 +74,45 @@ void compiler::init_block_map() {
         compiler->compile_input(target, block, block->inputs["VALUE"]);
         compiler->code << ";" ENDL;
     };
+
+    // procedures
+    this->block_map["procedures_call"] = [](PARAMS) -> void {
+        auto &proccode = block->mutation->data["proccode"];
+        for (auto &c : compiler->procedure_prototypes) {
+            if (c.proccode == proccode) {
+                compiler->code << "co_yield func_" << std::to_string(c.id) << "(";
+                for (auto &arg : c.arg_name_id) PARSE_INPUT(arg.second);
+                compiler->code << ");" ENDL;
+                return;
+            }
+        }
+    };
+    this->input_map["argument_reporter_string_number"] = [](PARAMS) -> void {
+        auto &arg_name = block->inputs["VALUE"]->value;
+        
+        // note that the current compiling procedure must be the last one in procedure_prototypes
+        auto &arg_list = compiler->procedure_prototypes.rbegin()->arg_name_id;
+        for (int i = 0; auto &c : arg_list) {
+            if (c.first == arg_name) {
+                compiler->code << "arg_" << std::to_string(i);
+                return;
+            }
+            ++i;
+        }
+    };
+    this->input_map["argument_reporter_boolean"] = [](PARAMS) -> void {
+        auto &arg_name = block->inputs["VALUE"]->value;
+        
+        // note that the current compiling procedure must be the last one in procedure_prototypes
+        auto &arg_list = compiler->procedure_prototypes.rbegin()->arg_name_id;
+        for (int i = 0; auto &c : arg_list) {
+            if (c.first == arg_name) {
+                compiler->code << "static_cast<bool>(arg_" << std::to_string(i) << ")";
+                return;
+            }
+            ++i;
+        }
+    };
 }
 
 }

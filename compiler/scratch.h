@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <variant>
+#include <utility>
 
 namespace clipcc {
     enum value_type {
@@ -20,6 +21,11 @@ namespace clipcc {
         std::string value;
     };
 
+    class scratch_mutation {
+    public:
+        std::unordered_map<std::string, std::string> data; 
+    };
+
     class scratch_block {
     public:
         std::string id;
@@ -28,6 +34,7 @@ namespace clipcc {
         std::string next;
         std::string parent;
         std::unordered_map<std::string, scratch_input *> inputs;
+        scratch_mutation *mutation = nullptr;
     };
 
     class scratch_costume {
@@ -97,6 +104,14 @@ namespace clipcc {
     public:
         std::vector<scratch_target *> targets;
         scratch_target *stage;
+    };
+
+    class scratch_procedure {
+    public:
+        int id;
+        std::string proccode;
+        bool is_warp;
+        std::vector<std::pair<std::string, std::string>> arg_name_id;
     };
 }
 
