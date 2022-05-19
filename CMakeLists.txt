@@ -43,9 +43,9 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     list(APPEND VM_LIB pthread)
 endif()
 
-add_library(clipcc-vm SHARED ${VM_SRC})
-target_include_directories(clipcc-vm PUBLIC ${VM_INC})
-target_link_libraries(clipcc-vm PUBLIC ${VM_LIB})
+#add_library(clipcc-vm SHARED ${VM_SRC})
+#target_include_directories(clipcc-vm PUBLIC ${VM_INC})
+#target_link_libraries(clipcc-vm PUBLIC ${VM_LIB})
 
 add_library(clipcc-vm-static STATIC ${VM_SRC})
 target_include_directories(clipcc-vm-static PUBLIC ${VM_INC})
