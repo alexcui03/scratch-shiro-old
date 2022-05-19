@@ -43,11 +43,25 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     list(APPEND VM_LIB pthread)
 endif()
 
-#add_library(clipcc-vm SHARED ${VM_SRC})
-#add_library(clipcc-vm-static STATIC ${VM_SRC})
-add_executable(clipcc-vm-test ${VM_SRC})
-target_include_directories(clipcc-vm-test PRIVATE ${VM_INC})
-target_link_libraries(clipcc-vm-test PRIVATE ${VM_LIB})
+add_library(clipcc-vm SHARED ${VM_SRC})
+target_include_directories(clipcc-vm PUBLIC ${VM_INC})
+target_link_libraries(clipcc-vm PUBLIC ${VM_LIB})
+
+add_library(clipcc-vm-static STATIC ${VM_SRC})
+target_include_directories(clipcc-vm-static PUBLIC ${VM_INC})
+target_link_libraries(clipcc-vm-static PUBLIC ${VM_LIB})
+
+# tests
+enable_testing()
+set(TEST_FILES)
+file(GLOB TEST_FILES ${CMAKE_SOURCE_DIR}/test/*.json)
+foreach(TEST_FILE ${TEST_FILES})
+    string(REGEX MATCH "([a-zA-Z0-9]*).json" TEST_NAME ${TEST_FILE})
+    string(REGEX REPLACE ".json" "" TEST_NAME ${TEST_NAME})
+    add_test(NAME ${TEST_NAME} COMMAND clipcc-compiler -s ${TEST_FILE})
+endforeach()
+
+configure_file(${CMAKE_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_BINARY_DIR})
 
 # configs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
