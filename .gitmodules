@@ -4,3 +4,6 @@
 [submodule "third_party/argparse"]
 	path = third_party/argparse
 	url = https://github.com/jamolnng/argparse.git
+[submodule "third_party/libzip"]
+	path = third_party/libzip
+	url = https://github.com/nih-at/libzip.git
