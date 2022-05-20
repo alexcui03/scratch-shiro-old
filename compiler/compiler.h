@@ -32,7 +32,8 @@ namespace clipcc {
         void init_block_map(); // in block_map.cpp
         void compile();
         void compile_target(scratch_target *target, int i);
-        void compile_input(scratch_target *target, scratch_block *parent, scratch_input *input);
+        void compile_substack(scratch_target *target, scratch_block *substack);
+        void compile_input(scratch_target *target, scratch_input *input);
     };
 }
 

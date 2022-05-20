@@ -172,7 +172,24 @@ void compiler::compile_target(scratch_target *target, int i) {
     this->code << "};" ENDL;
 }
 
-void compiler::compile_input(scratch_target *target, scratch_block *parent, scratch_input *input) {
+void compiler::compile_substack(scratch_target *target, scratch_block *substack) {
+    auto cur_block = substack;
+    while (!cur_block->next.empty()) {
+        if (!target->blocks_map.contains(cur_block->next)) {
+            std::cerr << "[error] cannot found block id " << cur_block->next << std::endl;
+            break;
+        }
+        cur_block = target->blocks_map[cur_block->next];
+        if (this->block_map.contains(cur_block->opcode)) {
+            this->block_map[cur_block->opcode](this, target, cur_block);
+        }
+        else {
+            std::cerr << "[warn] unsupported opcode: " << cur_block->opcode << std::endl;
+        }
+    }
+}
+
+void compiler::compile_input(scratch_target *target, scratch_input *input) {
     if (input->block_id.empty()) {
         if (input->type == value_type::var) {
             // when it is an var name, then judge whether it is local or global.

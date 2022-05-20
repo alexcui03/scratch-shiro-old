@@ -7,7 +7,8 @@
 namespace clipcc {
 
 #define PARAMS compiler *compiler, scratch_target *target, scratch_block *block
-#define PARSE_INPUT(x) compiler->compile_input(target, block, block->inputs[x])
+#define PARSE_INPUT(x) compiler->compile_input(target, block->inputs[x])
+#define PARSE_SUBSTACK(x) compiler->compile_substack(target, target->blocks_map[block->inputs[x]->value]);
 
 void compiler::init_block_map() {
     // in this function, we will initialize all the original scratch blocks for generation.
@@ -40,6 +41,115 @@ void compiler::init_block_map() {
         compiler->code << ");" ENDL;
     };
 
+    // sounds
+
+    // events
+
+    // control
+    this->block_map["control_repeat"] = [](PARAMS) -> void {
+        compiler->code << "for (int i = ";
+        PARSE_INPUT("TIMES");
+        compiler->code << "; i < time; ++i) {" ENDL;
+        PARSE_SUBSTACK("SUBSTACK");
+        compiler->code << "}" ENDL;
+    };
+    this->block_map["control_repeat_until"] = [](PARAMS) -> void {
+        compiler->code << "while (!(";
+        PARSE_INPUT("CONDITION");
+        compiler->code << ")) {" ENDL;
+        PARSE_SUBSTACK("SUBSTACK");
+        compiler->code << "}" ENDL;
+    };
+    this->block_map["control_while"] = [](PARAMS) -> void {
+        compiler->code << "while (";
+        PARSE_INPUT("CONDITION");
+        compiler->code << ") {" ENDL;
+        PARSE_SUBSTACK("SUBSTACK");
+        compiler->code << "}" ENDL;
+    };
+    this->block_map["control_for_each"] = [](PARAMS) -> void {
+        block->inputs["VARIABLE"]->type = value_type::var; // it's parsed from field
+        compiler->code << "{" ENDL;
+        compiler->code << "int value = ";
+        PARSE_INPUT("VALUE");
+        compiler->code << ";" ENDL "for (int i = 0; i < value; ++i) {" ENDL;
+        PARSE_INPUT("VARIABLE");
+        compiler->code << "= i;" ENDL;
+        PARSE_SUBSTACK("SUBSTACK");
+        compiler->code << "}" ENDL "}" ENDL;
+    };
+    this->block_map["control_forever"] = [](PARAMS) -> void {
+        compiler->code << "while (true) {" ENDL;
+        PARSE_SUBSTACK("SUBSTACK")
+        compiler->code << "}" ENDL;
+    };
+    this->block_map["control_wait"] = [](PARAMS) -> void {
+        compiler->code << "{ int d = ";
+        PARSE_INPUT("DURATION");
+        compiler->code << "; "
+            "auto start_time = std::chrono::steady_clock::now(); "
+            "auto end_time = start_time; "
+            "while (std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() < d) "
+            "co_await std::suspend_alwasy{}; }" ENDL;
+    };
+    this->block_map["control_wait_until"] = [](PARAMS) -> void {
+        compiler->code << "while (";
+        PARSE_INPUT("CONDITION");
+        compiler->code << ") co_await std::suspend_always{};";
+    };
+    this->block_map["control_if"] = [](PARAMS) -> void {
+        compiler->code << "if (";
+        PARSE_INPUT("CONDITION");
+        compiler->code << ") {" ENDL;
+        PARSE_SUBSTACK("SUBSTACK");
+        compiler->code << "}" ENDL;
+    };
+    this->block_map["control_if_else"] = [](PARAMS) -> void {
+        compiler->code << "if (";
+        PARSE_INPUT("CONDITION");
+        compiler->code << ") {" ENDL;
+        PARSE_SUBSTACK("SUBSTACK");
+        compiler->code << "}" ENDL "else {" ENDL;
+        PARSE_SUBSTACK("SUBSTACK2");
+        compiler->code << "}" ENDL;
+    };
+    this->block_map["control_stop"] = [](PARAMS) -> void {
+        auto &opt = block->inputs["STOP_OPTION"]->value;
+        if (opt == "all") {
+            compiler->code << "runtime.request_stop();" ENDL "co_return;" ENDL;
+        }
+        else if (opt == "other scripts in sprite") {
+            compiler->code << "runtime.request_stop(this);" ENDL;
+        }
+        else if (opt == "this script") {
+            compiler->code << "co_return;";
+        }
+    };
+    // @todo support clone
+    /*this->block_map["control_create_clone_o"] = [](PARAMS) -> void {
+
+    };
+    this->block_map["control_delete_this_clone"] = [](PARAMS) -> void {
+
+    };*/
+    this->input_map["control_get_counter"] = [](PARAMS) -> void {
+        compiler->code << "runtime->counter";
+    };
+    this->block_map["control_incr_counter"] = [](PARAMS) -> void {
+        compiler->code << "++runtime->counter;" ENDL;
+    };
+    this->block_map["control_clear_counter"] = [](PARAMS) -> void {
+        compiler->code << "runtime->counter = 0;" ENDL;
+    };
+    this->block_map["control_all_at_once"] = [](PARAMS) -> void {
+        // Since the "all at once" block is implemented for compatiblity with
+        // Scratch 2.0 projects, it behaves the same way it did in 2.0, which
+        // is to simply run the contained script (like "if 1 = 1").
+        // (In early versions of Scratch 2.0, it would work the same way as
+        // "run without screen refresh" custom blocks do now, but this was
+        // removed before the release of 2.0.)
+    };
+
     // sensing
     this->block_map["sensing_askandwait"] = [](PARAMS) -> void {
         compiler->code << "co_yield runtime->ask_and_wait(";
@@ -50,7 +160,7 @@ void compiler::init_block_map() {
         compiler->code << "runtime->answer";
     };
 
-    // operator
+    // operators
     this->input_map["operator_add"] = [](PARAMS) -> void {
         compiler->code << "static_cast<double>(";
         PARSE_INPUT("NUM1");
@@ -68,10 +178,10 @@ void compiler::init_block_map() {
 
     // data
     this->block_map["data_setvariableto"] = [](PARAMS) -> void {
-        block->inputs["VARIABLE"]->type = value_type::var;
-        compiler->compile_input(target, block, block->inputs["VARIABLE"]);
+        block->inputs["VARIABLE"]->type = value_type::var; // it's parsed from field
+        PARSE_INPUT("VARIABLE");
         compiler->code << " = ";
-        compiler->compile_input(target, block, block->inputs["VALUE"]);
+        PARSE_INPUT("VALUE");
         compiler->code << ";" ENDL;
     };
 
