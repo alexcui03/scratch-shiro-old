@@ -89,7 +89,7 @@ void compiler::init_block_map() {
         compiler->code << "; "
             "auto start_time = std::chrono::steady_clock::now(); "
             "auto end_time = start_time; "
-            "while (std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() < d) "
+            "while (std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() <= d) "
             "co_await std::suspend_alwasy{}; }" ENDL;
     };
     this->block_map["control_wait_until"] = [](PARAMS) -> void {
