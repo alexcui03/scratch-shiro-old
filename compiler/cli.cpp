@@ -2,6 +2,7 @@
 #include <fstream>
 #include <streambuf>
 #include <argparse.h>
+#include <libzip/zip.h>
 
 #include "compiler.h"
 

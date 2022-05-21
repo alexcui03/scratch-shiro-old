@@ -18,6 +18,10 @@ get_target_property(JSONCPP_INC jsoncpp_lib INTERFACE_INCLUDE_DIRECTORIES)
 set(ARGPARSE_DIR ${CMAKE_SOURCE_DIR}/third_party/argparse)
 set(ARGPARSE_INC ${ARGPARSE_DIR})
 
+# third_party/libzip
+set(LIBZIP_DIR ${CMAKE_SOURCE_DIR}/third_party/libzip)
+add_subdirectory(${LIBZIP_DIR})
+
 # clipcc-compiler
 set(COMPILER_SRC)
 set(COMPILER_INC)
