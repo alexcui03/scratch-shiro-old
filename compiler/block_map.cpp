@@ -17,22 +17,130 @@ void compiler::init_block_map() {
 
     // motion
     this->block_map["motion_movesteps"] = [](PARAMS) -> void {
-        compiler->code << "move_steps(";
+        compiler->code << "{ int steps = ";
         PARSE_INPUT("STEPS");
-        compiler->code << ");" ENDL;
+        compiler->code << "; double theta = ccvm::rad(90 - this->direction); "
+            "this->x += std::cos(theta) * steps; "
+            "this->y += std::sin(theta) * steps; request_redraw(); }";
     };
     this->block_map["motion_gotoxy"] = [](PARAMS) -> void {
-        compiler->code << "this->x = (";
+        compiler->code << "this->x = ";
         PARSE_INPUT("X");
-        compiler->code << ");" ENDL "this->y = (";
+        compiler->code << "; this->y = ";
         PARSE_INPUT("Y");
-        compiler->code << ");" ENDL;
+        compiler->code << "; request_redraw();";
     };
     this->block_map["motion_goto"] = [](PARAMS) -> void {
-        compiler->code << "{auto target = getTarget(";
+        compiler->code << "{ auto target = getTarget(";
         PARSE_INPUT("TO");
-        compiler->code << ");" ENDL "this->x = target.x; this->y = target.y;}";
+        compiler->code << "); this->x = target.x; this->y = target.y; request_redraw(); }";
     };
+    this->block_map["motion_turnright"] = [](PARAMS) -> void {
+        compiler->code << "this->direction += ";
+        PARSE_INPUT("DEGREES");
+        compiler->code << "; request_redraw();";
+    };
+    this->block_map["motion_turnleft"] = [](PARAMS) -> void {
+        compiler->code << "this->direction -= ";
+        PARSE_INPUT("DEGREES");
+        compiler->code << "; request_redraw();";
+    };
+    this->block_map["motion_pointindirection"] = [](PARAMS) -> void {
+        compiler->code << "this->direction = ";
+        PARSE_INPUT("DEGREES");
+        compiler->code << "; request_redraw();";
+    };
+    this->block_map["motion_pointtowards"] = [](PARAMS) -> void {
+        compiler->code << "{ auto target = getTarget(";
+        PARSE_INPUT("TO");
+        compiler->code << "); this->direction = 90 - ccvm::deg(std::atan((target->y - this->y) / (target->x - this->x))); "
+            "request_redraw(); }";
+    };
+    this->block_map["motion_glidesecstoxy"] = [](PARAMS) -> void {
+        compiler->code << "{ int d = ";
+        PARSE_INPUT("SECS");
+        compiler->code << " * 1000; int end_x = ";
+        PARSE_INPUT("X");
+        compiler->code << ", end_y = ";
+        PARSE_INPUT("Y");
+        compiler->code <<"; "
+            "if (d <= 0) { this->x = endx; this->y = endy; } else { "
+            "auto start_time = std::chrono::steady_clock::now(); "
+            "int start_x = this->x, start_y = this->y; "
+            "auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(start_time - start_time); "
+            "while (dur.count() < d) {"
+            "double frac = static_cast<double>(dur.count()) / d; "
+            "this->x = start_x + frac * (end_x - start_x); "
+            "this->y = start_y + frac * (end_y - start_y); "
+            "request_redraw(); "
+            "co_await std::suspend_always{}; dur = std::chrono::steady_clock::now() - start_time; } "
+            "this->x = end_x; this->y = end_y; request_redraw(); } }";
+    };
+    this->block_map["motion_glideto"] = [](PARAMS) -> void {
+        compiler->code << "{ int d = ";
+        PARSE_INPUT("SECS");
+        compiler->code << " * 1000; auto target = getTarget(";
+        PARSE_INPUT("TO");
+        compiler->code << "); int end_x = target.x, end_y = targe.y; "
+            "if (d <= 0) { this->x = endx; this->y = endy; } else { "
+            "auto start_time = std::chrono::steady_clock::now(); "
+            "int start_x = this->x, start_y = this->y; "
+            "auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(start_time - start_time); "
+            "while (dur.count() < d) {"
+            "double frac = static_cast<double>(dur.count()) / d; "
+            "this->x = start_x + frac * (end_x - start_x); "
+            "this->y = start_y + frac * (end_y - start_y); "
+            "request_redraw(); "
+            "co_await std::suspend_always{}; dur = std::chrono::steady_clock::now() - start_time; } "
+            "this->x = end_x; this->y = end_y; request_redraw(); } }";
+    };/* @todo
+    this->block_map["motion_ifonedgebounce"] = [](PARAMS) -> void {
+
+    };*/
+    this->block_map["motion_setrotationstyle"] = [](PARAMS) -> void {
+        // this block's arg is an field, so we process it in compile time
+        auto &style = block->inputs["STYLE"]->value;
+        if (style == "left-right") {
+            compiler->code << "this->rotation_style = ccvm::rotation::left_right;";
+        }
+        else if (style == "don\'t rotate") {
+            compiler->code << "this->rotation_style = ccvm::rotation::no_rotation;";
+        }
+        else { // all around
+            compiler->code << "this->rotation_style = ccvm::rotation::all_around;";
+        }
+    };
+    this->block_map["motion_changexby"] = [](PARAMS) -> void {
+        compiler->code << "this->x += ";
+        PARSE_INPUT("X");
+        compiler->code < "; request_redraw();";
+    };
+    this->block_map["motion_changeyby"] = [](PARAMS) -> void {
+        compiler->code << "this->y += ";
+        PARSE_INPUT("Y");
+        compiler->code < "; request_redraw();";
+    };
+    this->block_map["motion_setx"] = [](PARAMS) -> void {
+        compiler->code << "this->x = ";
+        PARSE_INPUT("X");
+        compiler->code < "; request_redraw();";
+    };
+    this->block_map["motion_sety"] = [](PARAMS) -> void {
+        compiler->code << "this->y = ";
+        PARSE_INPUT("Y");
+        compiler->code < "; request_redraw();";
+    };
+    this->input_map["motion_xposition"] = [](PARAMS) -> void {
+        compiler->code << "this->x";
+    };
+    this->input_map["motion_yposition"] = [](PARAMS) -> void {
+        compiler->code << "this->y";
+    };
+    this->input_map["motion_direction"] = [](PARAMS) -> void {
+        compiler->code << "this->direction";
+    };
+    // lagacy no-op blocks:
+    // motion_scroll_right, motion_scroll_up, motion_align_scene, motion_xscroll, motion_yscroll
 
     // looks
     this->block_map["looks_say"] = [](PARAMS) -> void {
@@ -88,9 +196,9 @@ void compiler::init_block_map() {
         PARSE_INPUT("DURATION");
         compiler->code << "; "
             "auto start_time = std::chrono::steady_clock::now(); "
-            "auto end_time = start_time; "
-            "while (std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count() <= d) "
-            "co_await std::suspend_alwasy{}; }" ENDL;
+            "co_await std::suspend_always{}; "
+            "while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start_time).count() < d) "
+            "co_await std::suspend_always{}; }" ENDL;
     };
     this->block_map["control_wait_until"] = [](PARAMS) -> void {
         compiler->code << "while (";
