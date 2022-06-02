@@ -147,6 +147,15 @@ void compiler::compile_target(scratch_target *target, int i) {
             }
             else {
                 std::cerr << "[warn] unsupported opcode of top level block: " << block->opcode << std::endl;
+                // genertate if it is an command block
+                if (this->block_map.contains(block->opcode)) {
+                    this->block_map[block->opcode](this, target, block);
+                    this->code << ENDL;
+                }
+                else {
+                    this->code << "/* " << block->opcode << " */" ENDL;
+                    std::cerr << "[warn] unsupported opcode: " << block->opcode << std::endl;
+                }
             }
         }
 
@@ -159,8 +168,10 @@ void compiler::compile_target(scratch_target *target, int i) {
             cur_block = target->blocks_map[cur_block->next];
             if (this->block_map.contains(cur_block->opcode)) {
                 this->block_map[cur_block->opcode](this, target, cur_block);
+                this->code << ENDL;
             }
             else {
+                this->code << "/* " << cur_block->opcode << " */" ENDL;
                 std::cerr << "[warn] unsupported opcode: " << cur_block->opcode << std::endl;
             }
         }

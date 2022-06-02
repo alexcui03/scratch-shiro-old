@@ -12,6 +12,12 @@ ccvm::target::~target() {
 
 }
 
+void ccvm::target::request_redraw() const {
+    if (this->visible) {
+        this->runtime->request_redraw();
+    }
+}
+
 void ccvm::target::broadcast(const std::wstring &name) {
     this->runtime->broadcast(name);
 }

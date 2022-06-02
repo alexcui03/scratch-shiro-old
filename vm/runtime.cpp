@@ -105,3 +105,7 @@ void ccvm::runtime::terminate() {
 bool ccvm::runtime::should_terminate() {
     return this->terminate_status;
 }
+
+void ccvm::runtime::request_redraw() {
+    this->need_redraw = true;
+}

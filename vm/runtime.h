@@ -20,6 +20,7 @@ namespace ccvm {
         int push_thread(thread *thread);
         thread *get_thread(int i);
         void free_thread(int i);
+        target *get_target();
         void push_broadcast(std::wstring name, std::function<coroutine()> func);
         void broadcast(std::wstring name);
         std::vector<int> broadcast_and_wait(std::wstring name);
@@ -27,11 +28,13 @@ namespace ccvm {
         void excute();
         void terminate();
         bool should_terminate();
+        void request_redraw();
 
         target *stage;
         variant answer;
     private:
         bool terminate_status;
+        bool need_redraw;
 
         std::vector<thread *> thread_pool;
         std::stack<int> thread_free;
