@@ -173,7 +173,7 @@ void compiler::init_block_map() {
         PARSE_INPUT("CONDITION");
         compiler->code << ") {" ENDL;
         PARSE_SUBSTACK("SUBSTACK");
-        compiler->code << "}";
+        compiler->code << "co_await std::suspend_always{};" ENDL "}";
     };
     this->block_map["control_for_each"] = [](PARAMS) -> void {
         block->inputs["VARIABLE"]->type = value_type::var; // it's parsed from field
@@ -184,12 +184,12 @@ void compiler::init_block_map() {
         PARSE_INPUT("VARIABLE");
         compiler->code << "= i;" ENDL;
         PARSE_SUBSTACK("SUBSTACK");
-        compiler->code << "}" ENDL "}";
+        compiler->code << "co_await std::suspend_always{};" ENDL "}" ENDL "}";
     };
     this->block_map["control_forever"] = [](PARAMS) -> void {
         compiler->code << "while (true) {" ENDL;
         PARSE_SUBSTACK("SUBSTACK")
-        compiler->code << "}";
+        compiler->code << "co_await std::suspend_always{};" ENDL "}";
     };
     this->block_map["control_wait"] = [](PARAMS) -> void {
         compiler->code << "{ int d = ";
@@ -276,12 +276,165 @@ void compiler::init_block_map() {
         PARSE_INPUT("NUM2");
         compiler->code << ")";
     };
+    this->input_map["operator_subtract"] = [](PARAMS) -> void {
+        compiler->code << "static_cast<double>(";
+        PARSE_INPUT("NUM1");
+        compiler->code << ") - static_cast<double>(";
+        PARSE_INPUT("NUM2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_multiply"] = [](PARAMS) -> void {
+        compiler->code << "static_cast<double>(";
+        PARSE_INPUT("NUM1");
+        compiler->code << ") * static_cast<double>(";
+        PARSE_INPUT("NUM2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_divide"] = [](PARAMS) -> void {
+        compiler->code << "static_cast<double>(";
+        PARSE_INPUT("NUM1");
+        compiler->code << ") / static_cast<double>(";
+        PARSE_INPUT("NUM2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_lt"] = [](PARAMS) -> void {
+        compiler->code << "(";
+        PARSE_INPUT("OPERAND1");
+        compiler->code << ") < (";
+        PARSE_INPUT("OPERAND2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_equals"] = [](PARAMS) -> void {
+        compiler->code << "(";
+        PARSE_INPUT("OPERAND1");
+        compiler->code << ") == (";
+        PARSE_INPUT("OPERAND2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_gt"] = [](PARAMS) -> void {
+        compiler->code << "(";
+        PARSE_INPUT("OPERAND1");
+        compiler->code << ") > (";
+        PARSE_INPUT("OPERAND2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_and"] = [](PARAMS) -> void {
+        compiler->code << "(";
+        PARSE_INPUT("OPERAND1");
+        compiler->code << ") && (";
+        PARSE_INPUT("OPERAND2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_or"] = [](PARAMS) -> void {
+        compiler->code << "(";
+        PARSE_INPUT("OPERAND1");
+        compiler->code << ") || (";
+        PARSE_INPUT("OPERAND2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_not"] = [](PARAMS) -> void {
+        compiler->code << "!(";
+        PARSE_INPUT("OPERAND");
+        compiler->code << ")";
+    };
     this->input_map["operator_random"] = [](PARAMS) -> void {
         compiler->code << "clipcc::random((";
         PARSE_INPUT("FROM");
         compiler->code << "), (";
         PARSE_INPUT("TO");
         compiler->code << "))";
+    };
+    this->input_map["operator_join"] = [](PARAMS) -> void {
+        compiler->code << "clipcc::join(";
+        PARSE_INPUT("STRING1");
+        compiler->code << ", ";
+        PARSE_INPUT("STRING2");
+        compiler->code << ")";
+    };
+    // operator_indexof
+    this->input_map["operator_letter_of"] = [](PARAMS) -> void {
+        compiler->code << "clipcc::letter_of(";
+        PARSE_INPUT("STRING");
+        compiler->code << ", ";
+        PARSE_INPUT("LETTER");
+        compiler->code << ")";
+    };
+    this->input_map["operator_length"] = [](PARAMS) -> void {
+        compiler->code << "clipcc::length(";
+        PARSE_INPUT("STRING");
+        compiler->code << ")";
+    };
+    this->input_map["operator_contains"] = [](PARAMS) -> void {
+        compiler->code << "clipcc::contains(";
+        PARSE_INPUT("STRING1");
+        compiler->code << ", ";
+        PARSE_INPUT("STRING2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_mod"] = [](PARAMS) -> void {
+        compiler->code << "clipcc::mod(";
+        PARSE_INPUT("NUM1");
+        compiler->code << ", ";
+        PARSE_INPUT("NUM2");
+        compiler->code << ")";
+    };
+    this->input_map["operator_round"] = [](PARAMS) -> void {
+        compiler->code << "std::round(";
+        PARSE_INPUT("NUM");
+        compiler->code << ")";
+    };
+    this->input_map["operator_mathop"] = [](PARAMS) -> void {
+        auto &op = block->inputs["OPERATOR"]->value;
+        if (op == "abs") {
+            compiler->code << "std::abs";
+        }
+        else if (op == "floor") {
+            compiler->code << "std::floor";
+        }
+        else if (op == "ceiling") {
+            compiler->code << "std::ceil";
+        }
+        else if (op == "sqrt") {
+            compiler->code << "std::sqrt";
+        }
+        else if (op == "sin") {
+            compiler->code << "std::sin";
+        }
+        else if (op == "cos") {
+            compiler->code << "std::cos";
+        }
+        else if (op == "tan") {
+            compiler->code << "std::tan";
+        }
+        else if (op == "asin") {
+            compiler->code << "std::asin";
+        }
+        else if (op == "acos") {
+            compiler->code << "std::acos";
+        }
+        else if (op == "atan") {
+            compiler->code << "std::atan";
+        }
+        else if (op == "ln") {
+            compiler->code << "std::ln";
+        }
+        else if (op == "log") {
+            compiler->code << "std::log";
+        }
+        else if (op == "e ^") {
+            compiler->code << "std::exp";
+        }
+        
+        if (op == "10 ^") {
+            compiler->code << "std::pow(10, ";
+            PARSE_INPUT("NUM");
+            compiler->code << ")";
+        }
+        else {
+            compiler->code << "(";
+            PARSE_INPUT("NUM");
+            compiler->code << ")";
+        }
     };
 
     // data
