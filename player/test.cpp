@@ -49,9 +49,3 @@ clipcc::runtime *render_init() {
     runtime->push_thread(new clipcc::thread(std::bind(&target_1::func_0, target_1)));
     return runtime;
 }
-
-extern int render_main();
-
-int main() {
-    return render_main();
-}

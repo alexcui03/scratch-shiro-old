@@ -66,16 +66,6 @@ unsigned int target_impl::set_texture(unsigned int index) {
 }
 
 void target_impl::update_model() {
-    /*glm::mat4 rot = glm::rotate(glm::mat4(1.0f), glm::radians<float>(90 - parent->direction), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 trans = glm::translate(rot, glm::vec3(parent->x, parent->y, 0.0f));
-    this->model = trans * glm::scale(
-        glm::mat4(1.0f),
-        glm::vec3(
-            this->current_texture->width * (parent->size / 100.0),
-            this->current_texture->height * (parent->size / 100.0),
-            1.0f
-        )
-    );*/
     glm::mat4 trans = glm::mat4(1.0f);
     trans = glm::translate(trans, glm::vec3(parent->x, parent->y, 0.0f));
     trans = glm::rotate(trans, glm::radians<float>(90 - parent->direction), glm::vec3(0.0f, 0.0f, 1.0f));

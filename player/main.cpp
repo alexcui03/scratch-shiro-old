@@ -8,9 +8,9 @@
 
 #include "renderer.h"
 
-extern clipcc::runtime *render_init();
+extern clipcc::runtime *scratch_init();
 
-int render_main() {
+int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -32,7 +32,7 @@ int render_main() {
         return -1;
     }
 
-    clipcc::runtime *runtime = render_init();
+    clipcc::runtime *runtime = scratch_init();
 
     clipcc::renderer render(runtime);
     render.set_screen_size(480, 360);
