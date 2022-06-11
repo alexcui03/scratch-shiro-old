@@ -7,7 +7,7 @@
 
 #include "coroutine.h"
 
-namespace ccvm {
+namespace clipcc {
     enum class thread_status {
         ready, run, done
     };

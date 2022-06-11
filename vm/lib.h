@@ -5,11 +5,14 @@
 
 #include "variant.h"
 
-namespace ccvm {
+namespace clipcc {
 
 int random(int a, int b);
 double random(double a, double b);
 variant random(variant a, variant b);
+
+double rad(double x);
+double deg(double x);
 
 bool is_int(double x);
 std::string join(const std::string &a, const std::string &b);

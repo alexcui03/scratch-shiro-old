@@ -4,51 +4,73 @@
 #include "runtime.h"
 #include "thread.h"
 
-ccvm::target::target(ccvm::runtime *rt) {
+#include "../player/target_impl.h"
+
+namespace clipcc {
+
+target::target(clipcc::runtime *rt) {
     this->runtime = rt;
+    this->impl = new target_impl(this);
 }
 
-ccvm::target::~target() {
+target::~target() {
 
 }
 
-void ccvm::target::request_redraw() const {
+void target::request_redraw() const {
     if (this->visible) {
+        impl->request_redraw();
         this->runtime->request_redraw();
     }
 }
 
-void ccvm::target::broadcast(const std::wstring &name) {
+void target::broadcast(const std::string &name) {
     this->runtime->broadcast(name);
 }
 
-std::vector<int> ccvm::target::broadcast_and_wait(const std::wstring &name) {
+std::vector<int> target::broadcast_and_wait(const std::string &name) {
     return this->runtime->broadcast_and_wait(name);
 }
 
-bool ccvm::target::check_waiting_threads(const std::vector<int> &waiting) {
+bool target::check_waiting_threads(const std::vector<int> &waiting) {
     for (auto i : waiting) {
         if (this->runtime->get_thread(i) != nullptr) return false;
     }
     return true;
 }
-
-ccvm::stage::stage(ccvm::runtime *rt): target(rt) {
-    
+        
+void target::load_costume(const std::string &name, const std::string &path) {
+    impl->load_costume(path);
+    this->costume_map.push_back(name);
 }
 
-ccvm::stage::~stage() {
+void target::load_sound(const std::string &name, const std::string &path) {
+    this->sound_map.push_back(name);
+}
+
+void target::set_costume(int x) {
+    this->current_costume = x;
+    impl->set_costume(x);
+}
+
+stage::stage(clipcc::runtime *rt): target(rt) {
+    runtime->stage = this;
+}
+
+stage::~stage() {
 
 }
 
-ccvm::sprite::sprite(ccvm::runtime *rt): target(rt) {
-    
-}
-
-ccvm::sprite::~sprite() {
+sprite::sprite(clipcc::runtime *rt): target(rt) {
 
 }
 
-void ccvm::sprite::say(const std::string &str) {
+sprite::~sprite() {
+
+}
+
+void sprite::say(const std::string &str) {
     std::cout << str << std::endl;
+}
+
 }

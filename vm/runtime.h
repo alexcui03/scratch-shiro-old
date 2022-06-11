@@ -9,21 +9,21 @@
 #include "thread.h"
 #include "variant.h"
 
-namespace ccvm {
+namespace clipcc {
     class target;
     
     class runtime {
     public:
         runtime();
         ~runtime();
-        void add_target(target *target);
+        void add_target(target *target, const std::string &name);
+        target *get_target(const std::string &name);
         int push_thread(thread *thread);
         thread *get_thread(int i);
         void free_thread(int i);
-        target *get_target();
-        void push_broadcast(std::wstring name, std::function<coroutine()> func);
-        void broadcast(std::wstring name);
-        std::vector<int> broadcast_and_wait(std::wstring name);
+        void push_broadcast(std::string name, std::function<coroutine()> func);
+        void broadcast(std::string name);
+        std::vector<int> broadcast_and_wait(std::string name);
         coroutine ask_and_wait(const std::string &str);
         void excute();
         void terminate();
@@ -32,15 +32,20 @@ namespace ccvm {
 
         target *stage;
         variant answer;
-    private:
+        
         bool terminate_status;
         bool need_redraw;
 
         std::vector<thread *> thread_pool;
         std::stack<int> thread_free;
 
-        std::vector<target *> targets;
-        std::map<std::wstring, std::vector<std::function<coroutine()>>> broadcast_map;
+        std::map<std::string, target *> target_map;
+        std::map<std::string, std::vector<std::function<coroutine()>>> broadcast_map;
+
+        target *mouse_target;
+        target *random_target;
+
+        void *renderer = nullptr;
     };
 }
 

@@ -1,8 +1,9 @@
 #include "lib.h"
 
+#include <numbers>
 #include <random>
 
-namespace ccvm {
+namespace clipcc {
 
 static std::random_device rd;
 static std::mt19937 gen(rd());
@@ -23,6 +24,14 @@ variant random(variant a, variant b) {
         return std::uniform_int_distribution<int>(a,b)(gen);
     else
         return std::uniform_real_distribution<double>(a,b)(gen);
+}
+
+double rad(double x) {
+    return x * std::numbers::pi / 180.0;
+}
+
+double deg(double x) {
+    return x * 180.0 / std::numbers::pi;
 }
 
 bool is_int(double x) {

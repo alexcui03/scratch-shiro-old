@@ -7,7 +7,7 @@
 
 #include "runtime.h"
 
-namespace ccvm {
+namespace clipcc {
     template <class Ty>
     concept arithmetic = std::is_arithmetic_v<Ty>;
 
@@ -17,29 +17,53 @@ namespace ccvm {
         all_around
     };
 
+    class target_impl;
+
     class target {
     public:
         target(runtime *rt);
         ~target();
+
         void request_redraw() const;
-        void broadcast(const std::wstring &name);
-        std::vector<int> broadcast_and_wait(const std::wstring &name);
+        void broadcast(const std::string &name);
+        std::vector<int> broadcast_and_wait(const std::string &name);
         bool check_waiting_threads(const std::vector<int> &waiting);
+        
+        void load_costume(const std::string &name, const std::string &path);
+        void load_sound(const std::string &name, const std::string &path);
+
+        void set_costume(int x);
+
+        target_impl *get_impl() { return this->impl; }
     public:
         runtime *runtime;
 
-        bool visible;
+        int x = 0;
+        int y = 0;
+        int direction = 90;
+        int size = 100;
+        bool visible = true;
+        int current_costume = 0;
+        rotation rotation_style = rotation::all_around;
+        bool draggable = false;
+        int tempo = 0;
+        int volume = 100;
+    protected:
+        target_impl *impl;
+
+        std::vector<std::string> costume_map;
+        std::vector<std::string> sound_map;
     };
 
     class stage: public target {
     public:
-        stage(ccvm::runtime *rt);
+        stage(clipcc::runtime *rt);
         ~stage();
     };
 
     class sprite: public target {
     public:
-        sprite(ccvm::runtime *rt);
+        sprite(clipcc::runtime *rt);
         ~sprite();
 
         // blocks
@@ -48,10 +72,6 @@ namespace ccvm {
             this->say(std::to_string(val));
         }
     public:
-        double x;
-        double y;
-        double direction;
-        rotation rotation_style;
     };
 }
 

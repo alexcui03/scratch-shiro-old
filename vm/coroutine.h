@@ -4,7 +4,7 @@
 #include <exception>
 #include <coroutine>
 
-namespace ccvm {
+namespace clipcc {
     class coroutine {
     public:
         class promise_type {

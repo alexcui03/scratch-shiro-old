@@ -3,3 +3,8 @@
 build
 build-*
 temp
+
+third_party/stb
+third_party/glfw
+third_party/glad
+third_party/glm

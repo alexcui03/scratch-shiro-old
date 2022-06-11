@@ -5,7 +5,7 @@
 
 #include "coroutine.h"
 
-namespace ccvm {
+namespace clipcc {
     using cc_statement = coroutine;
     using size_t = std::size_t;
 }

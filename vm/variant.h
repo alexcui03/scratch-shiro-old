@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace ccvm {
+namespace clipcc {
 
 namespace type {
     constexpr unsigned char string = 0x01;

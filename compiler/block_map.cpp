@@ -19,7 +19,7 @@ void compiler::init_block_map() {
     this->block_map["motion_movesteps"] = [](PARAMS) -> void {
         compiler->code << "{ int steps = ";
         PARSE_INPUT("STEPS");
-        compiler->code << "; double theta = ccvm::rad(90 - this->direction); "
+        compiler->code << "; double theta = clipcc::rad(90 - this->direction); "
             "this->x += std::cos(theta) * steps; "
             "this->y += std::sin(theta) * steps; request_redraw(); }";
     };
@@ -53,7 +53,7 @@ void compiler::init_block_map() {
     this->block_map["motion_pointtowards"] = [](PARAMS) -> void {
         compiler->code << "{ auto target = runtime->getTarget(";
         PARSE_INPUT("TOWARDS");
-        compiler->code << "); this->direction = 90 - ccvm::deg(std::atan((target->y - this->y) / (target->x - this->x))); "
+        compiler->code << "); this->direction = 90 - clipcc::deg(std::atan((target->y - this->y) / (target->x - this->x))); "
             "request_redraw(); }";
     };
     this->block_map["motion_glidesecstoxy"] = [](PARAMS) -> void {
@@ -101,13 +101,13 @@ void compiler::init_block_map() {
         // this block's arg is an field, so we process it in compile time
         auto &style = block->inputs["STYLE"]->value;
         if (style == "left-right") {
-            compiler->code << "this->rotation_style = ccvm::rotation::left_right;";
+            compiler->code << "this->rotation_style = clipcc::rotation::left_right;";
         }
         else if (style == "don\'t rotate") {
-            compiler->code << "this->rotation_style = ccvm::rotation::no_rotation;";
+            compiler->code << "this->rotation_style = clipcc::rotation::no_rotation;";
         }
         else { // all around
-            compiler->code << "this->rotation_style = ccvm::rotation::all_around;";
+            compiler->code << "this->rotation_style = clipcc::rotation::all_around;";
         }
     };
     this->block_map["motion_changexby"] = [](PARAMS) -> void {
@@ -277,7 +277,7 @@ void compiler::init_block_map() {
         compiler->code << ")";
     };
     this->input_map["operator_random"] = [](PARAMS) -> void {
-        compiler->code << "ccvm::random((";
+        compiler->code << "clipcc::random((";
         PARSE_INPUT("FROM");
         compiler->code << "), (";
         PARSE_INPUT("TO");

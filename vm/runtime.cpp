@@ -5,21 +5,37 @@
 #include <chrono>
 #include <iostream>
 
+#include "target.h"
+
 using namespace std::chrono_literals;
 
-ccvm::runtime::runtime() {
+clipcc::runtime::runtime() {
     this->terminate_status = false;
+    this->mouse_target = new clipcc::target(this);
+    this->random_target = new clipcc::target(this);
 }
 
-ccvm::runtime::~runtime() {
+clipcc::runtime::~runtime() {
 
 }
 
-void ccvm::runtime::add_target(target *target) {
-    this->targets.push_back(target);
+void clipcc::runtime::add_target(target *target, const std::string &name) {
+    this->target_map[name] = target;
 }
 
-int ccvm::runtime::push_thread(thread *thread) {
+clipcc::target *clipcc::runtime::get_target(const std::string &name) {
+    if (name == "mouse") {
+        return this->mouse_target;
+    }
+    if (name == "random") {
+        return this->random_target;
+    }
+    if (this->target_map.contains(name)) {
+        return this->target_map[name];
+    }
+}
+
+int clipcc::runtime::push_thread(thread *thread) {
     /*if (this->thread_free.size()) {
         const int i = this->thread_free.top();
         this->thread_free.pop();
@@ -33,21 +49,21 @@ int ccvm::runtime::push_thread(thread *thread) {
     return thread->id;
 }
 
-ccvm::thread *ccvm::runtime::get_thread(int i) {
+clipcc::thread *clipcc::runtime::get_thread(int i) {
     return this->thread_pool[i];
 }
 
-void ccvm::runtime::free_thread(int i) {
+void clipcc::runtime::free_thread(int i) {
     delete this->thread_pool[i];
     this->thread_pool[i] = nullptr;
     this->thread_free.push(i);
 }
 
-void ccvm::runtime::push_broadcast(std::wstring name, std::function<coroutine()> func) {
+void clipcc::runtime::push_broadcast(std::string name, std::function<coroutine()> func) {
     this->broadcast_map[name].push_back(func);
 }
 
-void ccvm::runtime::broadcast(std::wstring name) {
+void clipcc::runtime::broadcast(std::string name) {
     auto funcs = this->broadcast_map.find(name);
     if (funcs != this->broadcast_map.end()) {
         for (auto &func : funcs->second) {
@@ -56,7 +72,7 @@ void ccvm::runtime::broadcast(std::wstring name) {
     }
 }
 
-std::vector<int> ccvm::runtime::broadcast_and_wait(std::wstring name) {
+std::vector<int> clipcc::runtime::broadcast_and_wait(std::string name) {
     std::vector<int> list;
     auto funcs = this->broadcast_map.find(name);
     if (funcs != this->broadcast_map.end()) {
@@ -67,7 +83,7 @@ std::vector<int> ccvm::runtime::broadcast_and_wait(std::wstring name) {
     return list;
 }
 
-ccvm::coroutine ccvm::runtime::ask_and_wait(const std::string &str) {
+clipcc::coroutine clipcc::runtime::ask_and_wait(const std::string &str) {
     auto io = std::async([&]() {
         std::string s;
         std::getline(std::cin, s);
@@ -83,7 +99,7 @@ ccvm::coroutine ccvm::runtime::ask_and_wait(const std::string &str) {
     }
 }
 
-void ccvm::runtime::excute() {
+void clipcc::runtime::excute() {
     std::vector<int> done_thread;
     for (int i = 0; i < this->thread_pool.size(); ++i) {
         auto thread = this->thread_pool[i];
@@ -98,14 +114,14 @@ void ccvm::runtime::excute() {
     }
 }
 
-void ccvm::runtime::terminate() {
+void clipcc::runtime::terminate() {
     this->terminate_status = true;
 }
 
-bool ccvm::runtime::should_terminate() {
+bool clipcc::runtime::should_terminate() {
     return this->terminate_status;
 }
 
-void ccvm::runtime::request_redraw() {
+void clipcc::runtime::request_redraw() {
     this->need_redraw = true;
 }

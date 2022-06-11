@@ -8,6 +8,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-fcoroutines -fpermissive)
 endif()
 
+############### compiler ###############
+
 # third_party/libzip
 set(LIBZIP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/libzip)
 set(ENABLE_BZIP2 OFF)
@@ -44,6 +46,8 @@ add_executable(clipcc-compiler ${COMPILER_SRC})
 target_include_directories(clipcc-compiler PRIVATE ${COMPILER_INC})
 target_link_libraries(clipcc-compiler PRIVATE ${COMPILER_LIB})
 
+############### vm ###############
+
 # clipcc-vm
 set(VM_SRC)
 set(VM_INC)
@@ -60,9 +64,40 @@ endif()
 #target_include_directories(clipcc-vm PUBLIC ${VM_INC})
 #target_link_libraries(clipcc-vm PUBLIC ${VM_LIB})
 
-add_library(clipcc-vm-static STATIC ${VM_SRC})
-target_include_directories(clipcc-vm-static PUBLIC ${VM_INC})
-target_link_libraries(clipcc-vm-static PUBLIC ${VM_LIB})
+#add_library(clipcc-vm-static STATIC ${VM_SRC})
+#target_include_directories(clipcc-vm-static PUBLIC ${VM_INC})
+#target_link_libraries(clipcc-vm-static PUBLIC ${VM_LIB})
+
+############### player ###############
+
+# glfw
+set(GLFW_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glfw)
+set(GLFW_INC ${GLFW_DIR}/include)
+set(GLFW_LIB ${GLFW_DIR}/lib/glfw3.lib)
+
+# glad
+set(GLAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glad)
+set(GLAD_INC ${GLAD_DIR}/include)
+set(GLAD_SRC ${GLAD_DIR}/src/glad.c)
+
+# others (glm, stb)
+set(OTHER_INC ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
+
+# player
+set(PLAYER_SRC)
+set(PLAYER_INC)
+set(PLAYER_LIB ${GLFW_LIB})
+
+file(GLOB PLAYER_INC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.h)
+file(GLOB PLAYER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.cpp)
+list(APPEND PLAYER_INC ${OTHER_INC} ${GLAD_INC} ${GLFW_INC} ${CMAKE_CURRENT_SOURCE_DIR})
+list(APPEND PLAYER_SRC ${GLAD_SRC})
+
+add_executable(clipcc-player ${PLAYER_SRC} ${VM_SRC})
+target_include_directories(clipcc-player PRIVATE ${PLAYER_INC} ${VM_INC})
+target_link_libraries(clipcc-player PRIVATE ${PLAYER_LIB} ${VM_LIB})
+
+############### other ###############
 
 # tests
 enable_testing()

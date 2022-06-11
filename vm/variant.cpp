@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace ccvm {
+namespace clipcc {
 
 variant::variant() {
     this->value_type = type::integer;
