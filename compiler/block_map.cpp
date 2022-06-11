@@ -31,9 +31,9 @@ void compiler::init_block_map() {
         compiler->code << "; request_redraw();";
     };
     this->block_map["motion_goto"] = [](PARAMS) -> void {
-        compiler->code << "{ auto target = runtime->getTarget(";
+        compiler->code << "{ auto target = runtime->get_target(";
         PARSE_INPUT("TO");
-        compiler->code << "); this->x = target.x; this->y = target.y; request_redraw(); }";
+        compiler->code << "); this->x = target->x; this->y = target->y; request_redraw(); }";
     };
     this->block_map["motion_turnright"] = [](PARAMS) -> void {
         compiler->code << "this->direction += ";
@@ -51,7 +51,7 @@ void compiler::init_block_map() {
         compiler->code << "; request_redraw();";
     };
     this->block_map["motion_pointtowards"] = [](PARAMS) -> void {
-        compiler->code << "{ auto target = runtime->getTarget(";
+        compiler->code << "{ auto target = runtime->get_target(";
         PARSE_INPUT("TOWARDS");
         compiler->code << "); this->direction = 90 - clipcc::deg(std::atan((target->y - this->y) / (target->x - this->x))); "
             "request_redraw(); }";
@@ -79,9 +79,9 @@ void compiler::init_block_map() {
     this->block_map["motion_glideto"] = [](PARAMS) -> void {
         compiler->code << "{ int d = ";
         PARSE_INPUT("SECS");
-        compiler->code << " * 1000; auto target = runtime->getTarget(";
+        compiler->code << " * 1000; auto target = runtime->get_target(";
         PARSE_INPUT("TO");
-        compiler->code << "); int end_x = target.x, end_y = targe.y; "
+        compiler->code << "); int end_x = target->x, end_y = targe->y; "
             "if (d <= 0) { this->x = end_x; this->y = end_y; } else { "
             "auto start_time = std::chrono::steady_clock::now(); "
             "int start_x = this->x, start_y = this->y; "
