@@ -1,5 +1,7 @@
 #include "target_impl.h"
 
+#include <iostream>
+
 #include <glad/glad.h>
 #include <stb/stb_image.h>
 #include <glm/glm.hpp>
@@ -26,7 +28,7 @@ void target_impl::load_costume(const std::string &path) {
 }
 
 void target_impl::set_costume(int x) {
-    this->set_texture(x - 1);
+    this->set_texture(x);
 }
 
 void target_impl::request_redraw() {
@@ -39,7 +41,7 @@ int target_impl::load_texture(const std::string &path) {
     unsigned char *data = stbi_load(path.c_str(), &width, &height, &channel_count, 4);
 
     if (!data) {
-        //std::cerr << "[error] failed to load image" << std::endl;
+        std::cerr << "[error] failed to load image " << path << std::endl;
         return -1;
     }
 

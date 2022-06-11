@@ -38,7 +38,14 @@ namespace clipcc {
     };
 
     class scratch_costume {
-
+    public:
+        std::string asset_id;
+        std::string name;
+        // bitmapresolution ?
+        std::string md5ext;
+        std::string data_format;
+        std::string rotation_center_x;
+        std::string rotation_center_y;
     };
 
     class scratch_sound {

@@ -93,23 +93,34 @@ file(GLOB PLAYER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.cpp)
 list(APPEND PLAYER_INC ${OTHER_INC} ${GLAD_INC} ${GLFW_INC} ${CMAKE_CURRENT_SOURCE_DIR})
 list(APPEND PLAYER_SRC ${GLAD_SRC})
 
-add_executable(clipcc-player ${PLAYER_SRC} ${VM_SRC})
+add_library(clipcc-player STATIC ${PLAYER_SRC} ${VM_SRC})
 target_include_directories(clipcc-player PRIVATE ${PLAYER_INC} ${VM_INC})
 target_link_libraries(clipcc-player PRIVATE ${PLAYER_LIB} ${VM_LIB})
+
+############### test ###############
+set(TEST_SRC)
+set(TEST_LIB clipcc-player)
+
+file(GLOB TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp)
+list(APPEND TEST_INC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_executable(clipcc-test ${TEST_SRC} ${TEST_INC})
+target_include_directories(clipcc-test PRIVATE ${TEST_INC})
+target_link_libraries(clipcc-test PRIVATE ${TEST_LIB})
 
 ############### other ###############
 
 # tests
-enable_testing()
-set(TEST_FILES)
-file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*.json)
-foreach(TEST_FILE ${TEST_FILES})
-    string(REGEX MATCH "([a-zA-Z0-9]*).json" TEST_NAME ${TEST_FILE})
-    string(REGEX REPLACE ".json" "" TEST_NAME ${TEST_NAME})
-    add_test(NAME ${TEST_NAME} COMMAND clipcc-compiler -s ${TEST_FILE})
-endforeach()
+#enable_testing()
+#set(TEST_FILES)
+#file(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/*.json)
+#foreach(TEST_FILE ${TEST_FILES})
+#    string(REGEX MATCH "([a-zA-Z0-9]*).json" TEST_NAME ${TEST_FILE})
+#    string(REGEX REPLACE ".json" "" TEST_NAME ${TEST_NAME})
+#    add_test(NAME ${TEST_NAME} COMMAND clipcc-compiler -s ${TEST_FILE})
+#endforeach()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_CURRENT_BINARY_DIR})
+#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake ${CMAKE_CURRENT_BINARY_DIR})
 
 # configs
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)

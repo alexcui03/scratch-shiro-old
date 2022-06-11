@@ -101,7 +101,7 @@ void renderer::render() {
 
     // render all sprites
     for (auto &sprite : this->sprites) {
-    if (sprite->should_redraw()) sprite->update_model();
+        if (sprite->should_redraw()) sprite->update_model();
         glBindTexture(GL_TEXTURE_2D, sprite->get_texture());
         glUniformMatrix4fv(
             glGetUniformLocation(this->shader->id, "model"),

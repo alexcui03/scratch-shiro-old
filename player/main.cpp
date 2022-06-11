@@ -38,7 +38,10 @@ int main() {
     render.set_screen_size(480, 360);
 
     int framerate = 30;
-    double last_frame = 0, current_frame = 0;;
+    double last_frame = 0, current_frame = 0;
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     while (!glfwWindowShouldClose(window)) {
         // control fps

@@ -1,5 +1,5 @@
 #include <vm/clipcc_vm.h>
-
+/*
 class target_0 : public clipcc::stage{
 public:
     target_0(clipcc::runtime *rt) : clipcc::stage(rt) {
@@ -41,11 +41,11 @@ public:
         co_return;
     }
 };
-
-clipcc::runtime *render_init() {
+*/
+/*clipcc::runtime *render_init() {
     clipcc::runtime *runtime = new clipcc::runtime;
     target_0 *target_0 = new ::target_0(runtime);
     target_1 *target_1 = new ::target_1(runtime, target_0);
     runtime->push_thread(new clipcc::thread(std::bind(&target_1::func_0, target_1)));
     return runtime;
-}
+}*/

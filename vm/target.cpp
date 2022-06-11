@@ -49,8 +49,8 @@ void target::load_sound(const std::string &name, const std::string &path) {
 }
 
 void target::set_costume(int x) {
-    this->current_costume = x;
-    impl->set_costume(x);
+    this->current_costume = x - 1;
+    impl->set_costume(x - 1);
 }
 
 stage::stage(clipcc::runtime *rt): target(rt) {

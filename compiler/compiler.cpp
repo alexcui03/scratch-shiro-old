@@ -82,7 +82,19 @@ void compiler::compile_target(scratch_target *target, int i) {
     }
     else {
         this->code << class_name << "(clipcc::runtime *rt, target_0 *t): clipcc::" << parent_class << "(rt), stage(t) {" ENDL;
+        this->code << "runtime->add_target(this, \"" << target->name << "\");" ENDL;
     }
+    // load all costumes
+    for (auto &costume : target->costumes) {
+        this->code << "this->load_costume(\"" << costume->name << "\", \"assets/" << costume->md5ext << "\");" ENDL;
+    }
+    // load all properties
+    this->code << "this->x = " << std::to_string(target->x) << ";" ENDL;
+    this->code << "this->y = " << std::to_string(target->y) << ";" ENDL;
+    this->code << "this->direction = " << std::to_string(target->direction) << ";" ENDL;
+    this->code << "this->size = " << std::to_string(target->size) << ";" ENDL;
+    this->code << "this->visible = " << (target->visible ? "true" : "false") << ";" ENDL;
+    this->code << "this->current_costume = " << std::to_string(target->current_costume) << ";" ENDL;
     this->code << "}" ENDL;
     
     // destructor
@@ -282,6 +294,9 @@ scratch_target *parse_target(const Json::Value &root) {
         target->tempo = root["tempo"].asInt();
         target->video_transparency = root["videoTransparency"].asInt();
     }
+    else {
+        target->visible = root["visible"].asBool();
+    }
 
     // parse blocks
     parse_block(root["blocks"], target);
@@ -318,8 +333,21 @@ scratch_target *parse_target(const Json::Value &root) {
     // is comments needed?
     // @todo
 
-    // load sounds and costumes
+    // load sounds
     // @todo
+
+    // load costumes
+    for (auto costume_src : root["costumes"]) {
+        auto costume = new scratch_costume{
+            .asset_id = costume_src["assetId"].asString(),
+            .name = costume_src["name"].asString(),
+            .md5ext = costume_src["md5ext"].asString(),
+            .data_format = costume_src["dataFormat"].asString(),
+            .rotation_center_x = costume_src["rotationCenterX"].toStyledString(),
+            .rotation_center_y = costume_src["rotationCenterY"].toStyledString()
+        };
+        target->costumes.push_back(costume);
+    }
 
     return target;
 }
