@@ -17,9 +17,9 @@ target::~target() {
 
 }
 
-void target::request_redraw() const {
+void target::request_redraw() {
+    this->need_redraw = true;
     if (this->visible) {
-        impl->request_redraw();
         this->runtime->request_redraw();
     }
 }

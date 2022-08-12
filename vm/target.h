@@ -24,7 +24,7 @@ namespace clipcc {
         target(runtime *rt);
         ~target();
 
-        void request_redraw() const;
+        void request_redraw();
         void broadcast(const std::string &name);
         std::vector<int> broadcast_and_wait(const std::string &name);
         bool check_waiting_threads(const std::vector<int> &waiting);
@@ -48,6 +48,8 @@ namespace clipcc {
         bool draggable = false;
         int tempo = 0;
         int volume = 100;
+
+        bool need_redraw = false;
     protected:
         target_impl *impl;
 

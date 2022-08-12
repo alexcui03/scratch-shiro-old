@@ -13,7 +13,6 @@ namespace clipcc {
 
 target_impl::target_impl(target *parent) {
     this->parent = parent;
-    this->need_redraw = true;
 }
 
 target_impl::~target_impl() {
@@ -29,10 +28,6 @@ void target_impl::load_costume(const std::string &path) {
 
 void target_impl::set_costume(int x) {
     this->set_texture(x);
-}
-
-void target_impl::request_redraw() {
-    this->need_redraw = true;
 }
 
 int target_impl::load_texture(const std::string &path) {
@@ -77,6 +72,7 @@ void target_impl::update_model() {
         1.0f
     ));
     this->model = trans;
+    this->parent->need_redraw = false;
 }
 
 }
