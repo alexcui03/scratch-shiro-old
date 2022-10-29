@@ -33,6 +33,7 @@ shiro::target *shiro::runtime::get_target(const std::string &name) {
     if (this->target_map.contains(name)) {
         return this->target_map[name];
     }
+    return nullptr;
 }
 
 int shiro::runtime::push_thread(thread *thread) {
