@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <vm/shiro_vm.h>
+#include <vm/vm.h>
 
 #include "renderer.h"
 
@@ -20,7 +20,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif // PLATFORM_MACOS
 
-    GLFWwindow *window = glfwCreateWindow(480, 360, "Scratch Player", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(480, 360, "Shiro Player", nullptr, nullptr);
     if (window == nullptr) {
         std::cerr << "[error] failed to create glfw window" << std::endl;
         glfwTerminate();

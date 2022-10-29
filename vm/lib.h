@@ -1,5 +1,5 @@
-#ifndef _shiro_LIB_H_
-#define _shiro_LIB_H_
+#ifndef _SHIRO_LIB_H_
+#define _SHIRO_LIB_H_
 
 #include <string>
 
@@ -19,4 +19,4 @@ std::string join(const std::string &a, const std::string &b);
 
 }
 
-#endif // !_shiro_LIB_H_
+#endif // !_SHIRO_LIB_H_
