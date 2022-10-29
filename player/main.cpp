@@ -8,6 +8,7 @@
 
 #include "renderer.h"
 
+// the external scratch_init function, which should be linked when compiling
 extern clipcc::runtime *scratch_init();
 
 int main() {

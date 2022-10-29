@@ -38,7 +38,7 @@ bool target::check_waiting_threads(const std::vector<int> &waiting) {
     }
     return true;
 }
-        
+
 void target::load_costume(const std::string &name, const std::string &path) {
     impl->load_costume(path);
     this->costume_map.push_back(name);

@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        std::ofstream fout(temp_dir / name);
+        std::ofstream fout(temp_dir / name, std::ios::binary);
         if (!fout.is_open()) {
             std::cerr << "error: cannot create file " << (temp_dir / name) << " in temp dir." << std::endl;
             continue;

@@ -35,6 +35,7 @@ bool is_valid_number(const std::string &str) {
         if (str[i] == '.') {
             if (point) return false;
             point = true;
+            continue;
         }
         if (!std::isdigit(str[i])) return false;
     }
