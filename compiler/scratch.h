@@ -41,7 +41,7 @@ namespace shiro {
     public:
         std::string asset_id;
         std::string name;
-        // bitmapresolution ?
+        std::string bitmap_resolution;
         std::string md5ext;
         std::string data_format;
         std::string rotation_center_x;

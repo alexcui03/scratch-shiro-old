@@ -17,11 +17,11 @@ public:
     ~target_impl();
     
     // interface
-    void load_costume(const std::string &path);
+    void load_costume(const std::string &path, int resolution = 1);
     void set_costume(int x);
 
     inline bool should_redraw() { return this->parent->need_redraw; }
-    int load_texture(const std::string &path);
+    int load_texture(const std::string &path, int resolution = 1);
     void remove_texture(unsigned int id);
     inline unsigned int get_texture() { return this->current_texture->id; }
     unsigned int set_texture(unsigned int index);

@@ -29,7 +29,7 @@ namespace shiro {
         std::vector<int> broadcast_and_wait(const std::string &name);
         bool check_waiting_threads(const std::vector<int> &waiting);
         
-        void load_costume(const std::string &name, const std::string &path);
+        void load_costume(const std::string &name, const std::string &path, int resolution = 1);
         void load_sound(const std::string &name, const std::string &path);
 
         void set_costume(int x);

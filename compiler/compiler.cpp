@@ -86,7 +86,12 @@ void compiler::compile_target(scratch_target *target, int i) {
     }
     // load all costumes
     for (auto &costume : target->costumes) {
-        this->code << "this->load_costume(\"" << costume->name << "\", \"assets/" << costume->md5ext << "\");" ENDL;
+        if (!costume->bitmap_resolution.empty()) {
+            this->code << "this->load_costume(\"" << costume->name << "\", \"assets/" << costume->md5ext << "\", " << costume->bitmap_resolution << ");" ENDL;
+        }
+        else {
+            this->code << "this->load_costume(\"" << costume->name << "\", \"assets/" << costume->md5ext << "\");" ENDL;
+        }
     }
     // load all properties
     this->code << "this->x = " << std::to_string(target->x) << ";" ENDL;
@@ -346,6 +351,12 @@ scratch_target *parse_target(const Json::Value &root) {
             .rotation_center_x = costume_src["rotationCenterX"].toStyledString(),
             .rotation_center_y = costume_src["rotationCenterY"].toStyledString()
         };
+        if (costume_src["bitmapResolution"]) {
+            costume->bitmap_resolution = costume_src["bitmapResolution"].toStyledString();
+        }
+        else {
+            costume->bitmap_resolution = "";
+        }
         target->costumes.push_back(costume);
     }
 

@@ -4,9 +4,10 @@
 
 namespace shiro {
 
-texture::texture(unsigned char *data, unsigned int width, unsigned int height) {
+texture::texture(unsigned char *data, unsigned int width, unsigned int height, unsigned int resolution) {
     this->width = width;
     this->height = height;
+    this->resolution = resolution;
 
     glGenTextures(1, &this->id);
 

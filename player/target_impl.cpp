@@ -22,15 +22,15 @@ target_impl::~target_impl() {
     }
 }
 
-void target_impl::load_costume(const std::string &path) {
-    this->load_texture(path);
+void target_impl::load_costume(const std::string &path, int resolution) {
+    this->load_texture(path, resolution);
 }
 
 void target_impl::set_costume(int x) {
     this->set_texture(x);
 }
 
-int target_impl::load_texture(const std::string &path) {
+int target_impl::load_texture(const std::string &path, int resolution) {
     int width, height, channel_count;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(path.c_str(), &width, &height, &channel_count, 4);
@@ -40,7 +40,7 @@ int target_impl::load_texture(const std::string &path) {
         return -1;
     }
 
-    texture new_texture(data, width, height);
+    texture new_texture(data, width, height, resolution);
     this->textures.push_back(new_texture);
 
     stbi_image_free(data);
@@ -67,8 +67,8 @@ void target_impl::update_model() {
     trans = glm::translate(trans, glm::vec3(parent->x, parent->y, 0.0f));
     trans = glm::rotate(trans, glm::radians<float>(90 - parent->direction), glm::vec3(0.0f, 0.0f, 1.0f));
     trans = glm::scale(trans, glm::vec3(
-        this->current_texture->width * (parent->size / 100.0),
-        this->current_texture->height * (parent->size / 100.0),
+        this->current_texture->width * (static_cast<float>(parent->size) / this->current_texture->resolution / 100),
+        this->current_texture->height * (static_cast<float>(parent->size) / this->current_texture->resolution / 100),
         1.0f
     ));
     this->model = trans;
