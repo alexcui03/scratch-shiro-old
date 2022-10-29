@@ -4,7 +4,7 @@
 #include <exception>
 #include <coroutine>
 
-namespace clipcc {
+namespace shiro {
     class coroutine {
     public:
         class promise_type {

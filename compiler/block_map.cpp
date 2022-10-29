@@ -4,7 +4,7 @@
 #include "scratch.h"
 #include "util.h"
 
-namespace clipcc {
+namespace shiro {
 
 #define PARAMS compiler *compiler, scratch_target *target, scratch_block *block
 #define PARSE_INPUT(x) compiler->compile_input(target, block->inputs[x])
@@ -19,7 +19,7 @@ void compiler::init_block_map() {
     this->block_map["motion_movesteps"] = [](PARAMS) -> void {
         compiler->code << "{ int steps = ";
         PARSE_INPUT("STEPS");
-        compiler->code << "; double theta = clipcc::rad(90 - this->direction); "
+        compiler->code << "; double theta = shiro::rad(90 - this->direction); "
             "this->x += std::cos(theta) * steps; "
             "this->y += std::sin(theta) * steps; request_redraw(); }";
     };
@@ -53,7 +53,7 @@ void compiler::init_block_map() {
     this->block_map["motion_pointtowards"] = [](PARAMS) -> void {
         compiler->code << "{ auto target = runtime->get_target(";
         PARSE_INPUT("TOWARDS");
-        compiler->code << "); this->direction = 90 - clipcc::deg(std::atan((target->y - this->y) / (target->x - this->x))); "
+        compiler->code << "); this->direction = 90 - shiro::deg(std::atan((target->y - this->y) / (target->x - this->x))); "
             "request_redraw(); }";
     };
     this->block_map["motion_glidesecstoxy"] = [](PARAMS) -> void {
@@ -101,13 +101,13 @@ void compiler::init_block_map() {
         // this block's arg is an field, so we process it in compile time
         auto &style = block->inputs["STYLE"]->value;
         if (style == "left-right") {
-            compiler->code << "this->rotation_style = clipcc::rotation::left_right;";
+            compiler->code << "this->rotation_style = shiro::rotation::left_right;";
         }
         else if (style == "don\'t rotate") {
-            compiler->code << "this->rotation_style = clipcc::rotation::no_rotation;";
+            compiler->code << "this->rotation_style = shiro::rotation::no_rotation;";
         }
         else { // all around
-            compiler->code << "this->rotation_style = clipcc::rotation::all_around;";
+            compiler->code << "this->rotation_style = shiro::rotation::all_around;";
         }
     };
     this->block_map["motion_changexby"] = [](PARAMS) -> void {
@@ -338,14 +338,14 @@ void compiler::init_block_map() {
         compiler->code << ")";
     };
     this->input_map["operator_random"] = [](PARAMS) -> void {
-        compiler->code << "clipcc::random((";
+        compiler->code << "shiro::random((";
         PARSE_INPUT("FROM");
         compiler->code << "), (";
         PARSE_INPUT("TO");
         compiler->code << "))";
     };
     this->input_map["operator_join"] = [](PARAMS) -> void {
-        compiler->code << "clipcc::join(";
+        compiler->code << "shiro::join(";
         PARSE_INPUT("STRING1");
         compiler->code << ", ";
         PARSE_INPUT("STRING2");
@@ -353,26 +353,26 @@ void compiler::init_block_map() {
     };
     // operator_indexof
     this->input_map["operator_letter_of"] = [](PARAMS) -> void {
-        compiler->code << "clipcc::letter_of(";
+        compiler->code << "shiro::letter_of(";
         PARSE_INPUT("STRING");
         compiler->code << ", ";
         PARSE_INPUT("LETTER");
         compiler->code << ")";
     };
     this->input_map["operator_length"] = [](PARAMS) -> void {
-        compiler->code << "clipcc::length(";
+        compiler->code << "shiro::length(";
         PARSE_INPUT("STRING");
         compiler->code << ")";
     };
     this->input_map["operator_contains"] = [](PARAMS) -> void {
-        compiler->code << "clipcc::contains(";
+        compiler->code << "shiro::contains(";
         PARSE_INPUT("STRING1");
         compiler->code << ", ";
         PARSE_INPUT("STRING2");
         compiler->code << ")";
     };
     this->input_map["operator_mod"] = [](PARAMS) -> void {
-        compiler->code << "clipcc::mod(";
+        compiler->code << "shiro::mod(";
         PARSE_INPUT("NUM1");
         compiler->code << ", ";
         PARSE_INPUT("NUM2");

@@ -4,7 +4,7 @@
 #include <concepts>
 #include <string>
 
-namespace clipcc {
+namespace shiro {
 
 #define ENDL "\n"
 

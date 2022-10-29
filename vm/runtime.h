@@ -9,7 +9,7 @@
 #include "thread.h"
 #include "variant.h"
 
-namespace clipcc {
+namespace shiro {
     class target;
     
     class runtime {

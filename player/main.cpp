@@ -4,12 +4,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <vm/clipcc_vm.h>
+#include <vm/shiro_vm.h>
 
 #include "renderer.h"
 
 // the external scratch_init function, which should be linked when compiling
-extern clipcc::runtime *scratch_init();
+extern shiro::runtime *scratch_init();
 
 int main() {
     glfwInit();
@@ -33,9 +33,9 @@ int main() {
         return -1;
     }
 
-    clipcc::runtime *runtime = scratch_init();
+    shiro::runtime *runtime = scratch_init();
 
-    clipcc::renderer render(runtime);
+    shiro::renderer render(runtime);
     render.set_screen_size(480, 360);
 
     int framerate = 30;

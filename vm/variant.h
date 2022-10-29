@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace clipcc {
+namespace shiro {
 
 namespace type {
     constexpr unsigned char string = 0x01;

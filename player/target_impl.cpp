@@ -9,7 +9,7 @@
 
 #include "../vm/target.h"
 
-namespace clipcc {
+namespace shiro {
 
 target_impl::target_impl(target *parent) {
     this->parent = parent;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace clipcc {
+namespace shiro {
 
 class texture {
 public:

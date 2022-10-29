@@ -6,9 +6,9 @@
 
 #include "../player/target_impl.h"
 
-namespace clipcc {
+namespace shiro {
 
-target::target(clipcc::runtime *rt) {
+target::target(shiro::runtime *rt) {
     this->runtime = rt;
     this->impl = new target_impl(this);
 }
@@ -53,7 +53,7 @@ void target::set_costume(int x) {
     impl->set_costume(x - 1);
 }
 
-stage::stage(clipcc::runtime *rt): target(rt) {
+stage::stage(shiro::runtime *rt): target(rt) {
     runtime->stage = this;
 }
 
@@ -61,7 +61,7 @@ stage::~stage() {
 
 }
 
-sprite::sprite(clipcc::runtime *rt): target(rt) {
+sprite::sprite(shiro::runtime *rt): target(rt) {
 
 }
 

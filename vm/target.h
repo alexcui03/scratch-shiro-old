@@ -7,7 +7,7 @@
 
 #include "runtime.h"
 
-namespace clipcc {
+namespace shiro {
     template <class Ty>
     concept arithmetic = std::is_arithmetic_v<Ty>;
 
@@ -59,13 +59,13 @@ namespace clipcc {
 
     class stage: public target {
     public:
-        stage(clipcc::runtime *rt);
+        stage(shiro::runtime *rt);
         ~stage();
     };
 
     class sprite: public target {
     public:
-        sprite(clipcc::runtime *rt);
+        sprite(shiro::runtime *rt);
         ~sprite();
 
         // blocks

@@ -7,7 +7,7 @@
 
 #include "coroutine.h"
 
-namespace clipcc {
+namespace shiro {
     enum class thread_status {
         ready, run, done
     };

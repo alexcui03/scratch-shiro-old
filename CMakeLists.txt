@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(clipcc-runtime LANGUAGES CXX)
+project(scratch-shiro LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_CXX_STANDARD 20)
 
@@ -33,7 +33,7 @@ get_target_property(JSONCPP_INC jsoncpp_static INTERFACE_INCLUDE_DIRECTORIES)
 set(ARGPARSE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/argparse)
 set(ARGPARSE_INC ${ARGPARSE_DIR})
 
-# clipcc-compiler
+# shiro-compiler
 set(COMPILER_SRC)
 set(COMPILER_INC)
 set(COMPILER_LIB jsoncpp_static zip)
@@ -42,13 +42,13 @@ file(GLOB COMPILER_INC ${CMAKE_CURRENT_SOURCE_DIR}/compiler/*.h)
 file(GLOB COMPILER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/compiler/*.cpp)
 list(APPEND COMPILER_INC ${JSONCPP_INC} ${ARGPARSE_INC} ${LIBZIP_INC})
 
-add_executable(clipcc-compiler ${COMPILER_SRC})
-target_include_directories(clipcc-compiler PRIVATE ${COMPILER_INC})
-target_link_libraries(clipcc-compiler PRIVATE ${COMPILER_LIB})
+add_executable(shiro-compiler ${COMPILER_SRC})
+target_include_directories(shiro-compiler PRIVATE ${COMPILER_INC})
+target_link_libraries(shiro-compiler PRIVATE ${COMPILER_LIB})
 
 ############### vm ###############
 
-# clipcc-vm
+# shiro-vm
 set(VM_SRC)
 set(VM_INC)
 set(VM_LIB)
@@ -60,13 +60,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     list(APPEND VM_LIB pthread)
 endif()
 
-#add_library(clipcc-vm SHARED ${VM_SRC})
-#target_include_directories(clipcc-vm PUBLIC ${VM_INC})
-#target_link_libraries(clipcc-vm PUBLIC ${VM_LIB})
+#add_library(shiro-vm SHARED ${VM_SRC})
+#target_include_directories(shiro-vm PUBLIC ${VM_INC})
+#target_link_libraries(shiro-vm PUBLIC ${VM_LIB})
 
-#add_library(clipcc-vm-static STATIC ${VM_SRC})
-#target_include_directories(clipcc-vm-static PUBLIC ${VM_INC})
-#target_link_libraries(clipcc-vm-static PUBLIC ${VM_LIB})
+#add_library(shiro-vm-static STATIC ${VM_SRC})
+#target_include_directories(shiro-vm-static PUBLIC ${VM_INC})
+#target_link_libraries(shiro-vm-static PUBLIC ${VM_LIB})
 
 ############### player ###############
 
@@ -93,20 +93,20 @@ file(GLOB PLAYER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.cpp)
 list(APPEND PLAYER_INC ${OTHER_INC} ${GLAD_INC} ${GLFW_INC} ${CMAKE_CURRENT_SOURCE_DIR})
 list(APPEND PLAYER_SRC ${GLAD_SRC})
 
-add_library(clipcc-player STATIC ${PLAYER_SRC} ${VM_SRC})
-target_include_directories(clipcc-player PRIVATE ${PLAYER_INC} ${VM_INC})
-target_link_libraries(clipcc-player PRIVATE ${PLAYER_LIB} ${VM_LIB})
+add_library(shiro-player STATIC ${PLAYER_SRC} ${VM_SRC})
+target_include_directories(shiro-player PRIVATE ${PLAYER_INC} ${VM_INC})
+target_link_libraries(shiro-player PRIVATE ${PLAYER_LIB} ${VM_LIB})
 
 ############### test ###############
-set(TEST_SRC)
-set(TEST_LIB clipcc-player)
+#set(TEST_SRC)
+#set(TEST_LIB shiro-player)
 
-file(GLOB TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test/example/*.cpp)
-list(APPEND TEST_INC ${CMAKE_CURRENT_SOURCE_DIR})
+#file(GLOB TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test/example/*.cpp)
+#list(APPEND TEST_INC ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(clipcc-test ${TEST_SRC} ${TEST_INC})
-target_include_directories(clipcc-test PRIVATE ${TEST_INC})
-target_link_libraries(clipcc-test PRIVATE ${TEST_LIB})
+#add_executable(shiro-test ${TEST_SRC} ${TEST_INC})
+#target_include_directories(shiro-test PRIVATE ${TEST_INC})
+#target_link_libraries(shiro-test PRIVATE ${TEST_LIB})
 
 ############### other ###############
 

@@ -7,7 +7,7 @@
 
 #include <glad/glad.h>
 
-namespace clipcc {
+namespace shiro {
 
 static inline void check_shader_compile(int shader) {
     int success;

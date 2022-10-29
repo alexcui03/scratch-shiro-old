@@ -7,7 +7,7 @@
 
 #include "../vm/runtime.h"
 
-namespace clipcc {
+namespace shiro {
 
 #define offset(x, type) reinterpret_cast<void*>((x) * sizeof(type))
 
@@ -29,7 +29,7 @@ renderer::renderer(runtime *rt) {
     }
 
     // init shader
-    this->shader = new clipcc::shader("shader/target.vert", "shader/target.frag");
+    this->shader = new shiro::shader("shader/target.vert", "shader/target.frag");
 
     // init vao and vbo
     glGenVertexArrays(1, &this->vao);

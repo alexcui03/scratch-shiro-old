@@ -21,7 +21,7 @@ void process_zip_error(zip_t *zip) {
 }
 
 int main(int argc, char *argv[]) {
-    argparse::ArgumentParser parser("clipcc-compiler", "");
+    argparse::ArgumentParser parser("shiro-compiler", "");
     parser.add_argument("-s", "--src", "project file path", true);
     parser.add_argument("-t", "--temp", "temp directory path", false);
     parser.enable_help();
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
     std::string src((std::istreambuf_iterator<char>(fin)), std::istreambuf_iterator<char>());
     fin.close();
 
-    clipcc::compiler compiler;
+    shiro::compiler compiler;
     std::string code = compiler.compile_project(src);
 
     std::ofstream fout(temp_dir / "output.cpp");

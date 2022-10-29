@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace clipcc {
+namespace shiro {
 
 variant::variant() {
     this->value_type = type::integer;

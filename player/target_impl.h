@@ -9,7 +9,7 @@
 
 #include "../vm/target.h"
 
-namespace clipcc {
+namespace shiro {
 
 class target_impl {
 public:

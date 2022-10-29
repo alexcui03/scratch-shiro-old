@@ -5,7 +5,7 @@
 
 #include "coroutine.h"
 
-namespace clipcc {
+namespace shiro {
     using cc_statement = coroutine;
     using size_t = std::size_t;
 }

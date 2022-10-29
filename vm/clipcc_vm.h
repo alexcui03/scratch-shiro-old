@@ -1,7 +1,7 @@
-#ifndef _CLIPCC_VM_H_
-#define _CLIPCC_VM_H_
+#ifndef _shiro_VM_H_
+#define _shiro_VM_H_
 
-#define CLIPCC_VM_VERSION 20220514ll
+#define shiro_VM_VERSION 20220514ll
 
 #include <iostream>
 #include <string>
@@ -16,4 +16,4 @@
 #include "variant.h"
 #include "lib.h"
 
-#endif // !_CLIPCC_VM_H_
+#endif // !_shiro_VM_H_

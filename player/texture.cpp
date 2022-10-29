@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-namespace clipcc {
+namespace shiro {
 
 texture::texture(unsigned char *data, unsigned int width, unsigned int height) {
     this->width = width;

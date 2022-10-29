@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace clipcc {
+namespace shiro {
 
 class shader {
 public:

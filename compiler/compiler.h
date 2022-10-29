@@ -1,7 +1,7 @@
 #ifndef _COMPILER_H_
 #define _COMPILER_H_
 
-#define CLIPCC_COMPILER_VERSION 20220511ll
+#define shiro_COMPILER_VERSION 20220511ll
 
 #include <string>
 #include <map>
@@ -10,7 +10,7 @@
 
 #include "scratch.h"
 
-namespace clipcc {
+namespace shiro {
     class compiler {
     public:
         compiler();

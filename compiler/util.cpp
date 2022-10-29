@@ -3,7 +3,7 @@
 #include <string>
 #include <cctype>
 
-namespace clipcc {
+namespace shiro {
 
 std::string stringify(const std::string &str) {
     std::string res = "";

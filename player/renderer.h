@@ -7,7 +7,7 @@
 #include "target_impl.h"
 #include "shader.h"
 
-namespace clipcc {
+namespace shiro {
 
 class renderer {
 public:

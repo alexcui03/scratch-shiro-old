@@ -7,7 +7,7 @@
 #include <variant>
 #include <utility>
 
-namespace clipcc {
+namespace shiro {
     enum value_type {
         integer, real_number, string, var, any
     };
