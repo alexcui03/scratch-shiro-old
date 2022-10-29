@@ -41,11 +41,11 @@ namespace shiro {
     public:
         std::string asset_id;
         std::string name;
-        std::string bitmap_resolution;
+        int bitmap_resolution;
         std::string md5ext;
         std::string data_format;
-        std::string rotation_center_x;
-        std::string rotation_center_y;
+        int rotation_center_x;
+        int rotation_center_y;
     };
 
     class scratch_sound {
