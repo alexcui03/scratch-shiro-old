@@ -11,6 +11,7 @@
 
 namespace shiro {
     class target;
+    class audio_engine;
     
     class runtime {
     public:
@@ -25,12 +26,14 @@ namespace shiro {
         void broadcast(std::string name);
         std::vector<int> broadcast_and_wait(std::string name);
         coroutine ask_and_wait(const std::string &str);
+        void stop_all_sounds();
         void excute();
         void terminate();
         bool should_terminate();
         void request_redraw();
 
         target *stage;
+        audio_engine *audio;
         variant answer;
         
         bool terminate_status;

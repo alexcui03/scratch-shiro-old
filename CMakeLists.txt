@@ -81,9 +81,11 @@ set(GLAD_INC ${GLAD_DIR}/include)
 set(GLAD_SRC ${GLAD_DIR}/src/glad.c)
 
 # resvg
-#set(RESVG_DIR ${RESVG_DIR})
+#set(RESVG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/resvg)
 set(RESVG_INC ${RESVG_DIR}/c-api)
 set(RESVG_LIB ${RESVG_DIR}/target/release/resvg.dll.lib)
+
+# irrclang
 
 # others (glm, stb)
 set(OTHER_INC ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
@@ -91,11 +93,11 @@ set(OTHER_INC ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 # player
 set(PLAYER_SRC)
 set(PLAYER_INC)
-set(PLAYER_LIB ${GLFW_LIB} ${RESVG_LIB})
+set(PLAYER_LIB ${GLFW_LIB} ${RESVG_LIB} ${IRRKLANG_LIB})
 
 file(GLOB PLAYER_INC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.h)
 file(GLOB PLAYER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.cpp)
-list(APPEND PLAYER_INC ${OTHER_INC} ${GLAD_INC} ${GLFW_INC} ${RESVG_INC} ${CMAKE_CURRENT_SOURCE_DIR})
+list(APPEND PLAYER_INC ${OTHER_INC} ${GLAD_INC} ${GLFW_INC} ${RESVG_INC} ${IRRKLANG_INC} ${CMAKE_CURRENT_SOURCE_DIR})
 list(APPEND PLAYER_SRC ${GLAD_SRC})
 
 add_library(shiro-player STATIC ${PLAYER_SRC} ${VM_SRC})

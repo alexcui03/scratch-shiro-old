@@ -2,6 +2,7 @@
 #define _TARGET_H_
 
 #include <string>
+#include <map>
 #include <functional>
 #include <type_traits>
 
@@ -32,6 +33,9 @@ namespace shiro {
         void load_costume(const std::string &name, const std::string &path, int resolution = 1);
         void load_sound(const std::string &name, const std::string &path);
 
+        void play_sound(const std::string &name);
+        void stop_all_sounds();
+
         void set_costume(int x);
 
         target_impl *get_impl() { return this->impl; }
@@ -48,13 +52,15 @@ namespace shiro {
         bool draggable = false;
         int tempo = 0;
         int volume = 100;
+        int current_sound_id = -1;
 
         bool need_redraw = false;
     protected:
         target_impl *impl;
 
-        std::vector<std::string> costume_map;
-        std::vector<std::string> sound_map;
+        std::vector<std::string> costume_list;
+        std::vector<std::string> sound_list;
+        std::map<std::string, int> sound_id_map;
     };
 
     class stage: public target {

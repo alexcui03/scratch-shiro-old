@@ -1,10 +1,14 @@
 #include "target.h"
 
 #include <iostream>
+#include <string>
+#include <map>
+
 #include "runtime.h"
 #include "thread.h"
 
 #include "../player/target_impl.h"
+#include "../player/audio_engine.h"
 
 namespace shiro {
 
@@ -41,11 +45,32 @@ bool target::check_waiting_threads(const std::vector<int> &waiting) {
 
 void target::load_costume(const std::string &name, const std::string &path, int resolution) {
     impl->load_costume(path, resolution);
-    this->costume_map.push_back(name);
+    this->costume_list.push_back(name);
 }
 
 void target::load_sound(const std::string &name, const std::string &path) {
-    this->sound_map.push_back(name);
+    int sound_id = this->runtime->audio->load(path);
+    this->sound_list.push_back(name);
+    this->sound_id_map[name] = sound_id;
+}
+
+void target::play_sound(const std::string &name) {
+    if (this->current_sound_id > 0) {
+        if (this->runtime->audio->is_playing(this->current_sound_id)) {
+            this->runtime->audio->stop(this->current_sound_id);
+        }
+    }
+    if (this->sound_id_map.find(name) != this->sound_id_map.end()) {
+        this->current_sound_id = this->sound_id_map[name];
+    }
+    else {
+        this->current_sound_id = this->sound_id_map[this->sound_list[std::atoi(name.c_str())]];
+    }
+    this->runtime->audio->play(this->current_sound_id);
+}
+
+void target::stop_all_sounds() {
+    this->runtime->stop_all_sounds();
 }
 
 void target::set_costume(int x) {
@@ -54,7 +79,7 @@ void target::set_costume(int x) {
 }
 
 stage::stage(shiro::runtime *rt): target(rt) {
-    runtime->stage = this;
+    this->runtime->stage = this;
 }
 
 stage::~stage() {

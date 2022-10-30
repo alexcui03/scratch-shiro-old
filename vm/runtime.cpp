@@ -6,24 +6,28 @@
 #include <iostream>
 
 #include "target.h"
+#include "../player/audio_engine.h"
 
 using namespace std::chrono_literals;
 
-shiro::runtime::runtime() {
+namespace shiro {
+
+runtime::runtime() {
+    this->audio = new audio_engine;
     this->terminate_status = false;
-    this->mouse_target = new shiro::target(this);
-    this->random_target = new shiro::target(this);
+    this->mouse_target = new target(this);
+    this->random_target = new target(this);
 }
 
-shiro::runtime::~runtime() {
-
+runtime::~runtime() {
+    delete this->audio;
 }
 
-void shiro::runtime::add_target(target *target, const std::string &name) {
+void runtime::add_target(target *target, const std::string &name) {
     this->target_map[name] = target;
 }
 
-shiro::target *shiro::runtime::get_target(const std::string &name) {
+target *runtime::get_target(const std::string &name) {
     if (name == "mouse") {
         return this->mouse_target;
     }
@@ -36,7 +40,7 @@ shiro::target *shiro::runtime::get_target(const std::string &name) {
     return nullptr;
 }
 
-int shiro::runtime::push_thread(thread *thread) {
+int runtime::push_thread(thread *thread) {
     /*if (this->thread_free.size()) {
         const int i = this->thread_free.top();
         this->thread_free.pop();
@@ -50,21 +54,21 @@ int shiro::runtime::push_thread(thread *thread) {
     return thread->id;
 }
 
-shiro::thread *shiro::runtime::get_thread(int i) {
+thread *runtime::get_thread(int i) {
     return this->thread_pool[i];
 }
 
-void shiro::runtime::free_thread(int i) {
+void runtime::free_thread(int i) {
     delete this->thread_pool[i];
     this->thread_pool[i] = nullptr;
     this->thread_free.push(i);
 }
 
-void shiro::runtime::push_broadcast(std::string name, std::function<coroutine()> func) {
+void runtime::push_broadcast(std::string name, std::function<coroutine()> func) {
     this->broadcast_map[name].push_back(func);
 }
 
-void shiro::runtime::broadcast(std::string name) {
+void runtime::broadcast(std::string name) {
     auto funcs = this->broadcast_map.find(name);
     if (funcs != this->broadcast_map.end()) {
         for (auto &func : funcs->second) {
@@ -73,7 +77,7 @@ void shiro::runtime::broadcast(std::string name) {
     }
 }
 
-std::vector<int> shiro::runtime::broadcast_and_wait(std::string name) {
+std::vector<int> runtime::broadcast_and_wait(std::string name) {
     std::vector<int> list;
     auto funcs = this->broadcast_map.find(name);
     if (funcs != this->broadcast_map.end()) {
@@ -84,7 +88,7 @@ std::vector<int> shiro::runtime::broadcast_and_wait(std::string name) {
     return list;
 }
 
-shiro::coroutine shiro::runtime::ask_and_wait(const std::string &str) {
+coroutine runtime::ask_and_wait(const std::string &str) {
     auto io = std::async([&]() {
         std::string s;
         std::getline(std::cin, s);
@@ -100,7 +104,11 @@ shiro::coroutine shiro::runtime::ask_and_wait(const std::string &str) {
     }
 }
 
-void shiro::runtime::excute() {
+void runtime::stop_all_sounds() {
+    this->audio->stop_all_sounds();
+}
+
+void runtime::excute() {
     std::vector<int> done_thread;
     for (int i = 0; i < this->thread_pool.size(); ++i) {
         auto thread = this->thread_pool[i];
@@ -115,14 +123,16 @@ void shiro::runtime::excute() {
     }
 }
 
-void shiro::runtime::terminate() {
+void runtime::terminate() {
     this->terminate_status = true;
 }
 
-bool shiro::runtime::should_terminate() {
+bool runtime::should_terminate() {
     return this->terminate_status;
 }
 
-void shiro::runtime::request_redraw() {
+void runtime::request_redraw() {
     this->need_redraw = true;
+}
+
 }

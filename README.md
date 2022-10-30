@@ -17,6 +17,10 @@ The following libraries are included in git submodules. You don't need to config
 The following libraries should be configured manually. They should be configured and built before you build Shiro.
 - zlib
 - resvg
+- glad
+- glfw
+- glm
+- irrklang
 
 ### Configure & Build
 ```bash
