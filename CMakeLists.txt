@@ -80,33 +80,27 @@ set(GLAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glad)
 set(GLAD_INC ${GLAD_DIR}/include)
 set(GLAD_SRC ${GLAD_DIR}/src/glad.c)
 
+# resvg
+#set(RESVG_DIR ${RESVG_DIR})
+set(RESVG_INC ${RESVG_DIR}/c-api)
+set(RESVG_LIB ${RESVG_DIR}/target/release/resvg.dll.lib)
+
 # others (glm, stb)
 set(OTHER_INC ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 
 # player
 set(PLAYER_SRC)
 set(PLAYER_INC)
-set(PLAYER_LIB ${GLFW_LIB})
+set(PLAYER_LIB ${GLFW_LIB} ${RESVG_LIB})
 
 file(GLOB PLAYER_INC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.h)
 file(GLOB PLAYER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/player/*.cpp)
-list(APPEND PLAYER_INC ${OTHER_INC} ${GLAD_INC} ${GLFW_INC} ${CMAKE_CURRENT_SOURCE_DIR})
+list(APPEND PLAYER_INC ${OTHER_INC} ${GLAD_INC} ${GLFW_INC} ${RESVG_INC} ${CMAKE_CURRENT_SOURCE_DIR})
 list(APPEND PLAYER_SRC ${GLAD_SRC})
 
 add_library(shiro-player STATIC ${PLAYER_SRC} ${VM_SRC})
 target_include_directories(shiro-player PRIVATE ${PLAYER_INC} ${VM_INC})
 target_link_libraries(shiro-player PRIVATE ${PLAYER_LIB} ${VM_LIB})
-
-############### test ###############
-#set(TEST_SRC)
-#set(TEST_LIB shiro-player)
-
-#file(GLOB TEST_SRC ${CMAKE_CURRENT_SOURCE_DIR}/test/example/*.cpp)
-#list(APPEND TEST_INC ${CMAKE_CURRENT_SOURCE_DIR})
-
-#add_executable(shiro-test ${TEST_SRC} ${TEST_INC})
-#target_include_directories(shiro-test PRIVATE ${TEST_INC})
-#target_link_libraries(shiro-test PRIVATE ${TEST_LIB})
 
 ############### other ###############
 

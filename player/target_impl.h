@@ -4,6 +4,7 @@
 #include <string>
 
 #include <glm/glm.hpp>
+#include <resvg.h>
 
 #include "texture.h"
 
@@ -21,7 +22,8 @@ public:
     void set_costume(int x);
 
     inline bool should_redraw() { return this->parent->need_redraw; }
-    int load_texture(const std::string &path, int resolution = 1);
+    int load_bitmap_texture(const std::string &path, int resolution = 1);
+    int load_vector_texture(const std::string &path);
     void remove_texture(unsigned int id);
     inline unsigned int get_texture() { return this->current_texture->id; }
     unsigned int set_texture(unsigned int index);
@@ -29,6 +31,8 @@ public:
     void update_model();
 protected:
     target *parent;
+
+    resvg_options *resvg_option;
 
     texture *current_texture;
     std::vector<texture> textures;

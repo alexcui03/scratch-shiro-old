@@ -94,11 +94,13 @@ void compiler::compile_target(scratch_target *target, int i) {
         }
     }
     // load all properties
-    this->code << "this->x = " << std::to_string(target->x) << ";" ENDL;
-    this->code << "this->y = " << std::to_string(target->y) << ";" ENDL;
-    this->code << "this->direction = " << std::to_string(target->direction) << ";" ENDL;
-    this->code << "this->size = " << std::to_string(target->size) << ";" ENDL;
-    this->code << "this->visible = " << (target->visible ? "true" : "false") << ";" ENDL;
+    if (!target->is_stage) {
+        this->code << "this->x = " << std::to_string(target->x) << ";" ENDL;
+        this->code << "this->y = " << std::to_string(target->y) << ";" ENDL;
+        this->code << "this->direction = " << std::to_string(target->direction) << ";" ENDL;
+        this->code << "this->size = " << std::to_string(target->size) << ";" ENDL;
+        this->code << "this->visible = " << (target->visible ? "true" : "false") << ";" ENDL;
+    }
     this->code << "this->set_costume(" << std::to_string(target->current_costume) << ");" ENDL;
     this->code << "}" ENDL;
     
